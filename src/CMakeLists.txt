@@ -1,4 +1,4 @@
-# Copyright 2013, Francois Keith, Thomas Moulard, Olivier Stasse, JRL, CNRS/AIST
+# Copyright 2016, R. Budhiraja, Olivier Stasse, CNRS
 #
 # This file is part of sot-talos.
 # sot-talos is free software: you can redistribute it and/or
@@ -17,7 +17,6 @@ INCLUDE(../cmake/python.cmake)
 FINDPYTHON()
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
-##
 FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
   ADD_LIBRARY(${NAME} SHARED ${SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES
@@ -53,38 +52,72 @@ SET(PYTHON_MODULE_BUILD_DIR
 
 SET(PYTHON_MODULE dynamic_graph/sot/talos)
 PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "__init__.py" )
-PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "prologue.py" )
-PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "robot.py" "${PYTHON_SITELIB}")
+PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "talos.py" )
+SET(FILES __init__.py robot.py)
 
+# Add the library to wrap the device of Talos.
+MACRO(build_talos_device)
 
-
-# Add the library to wrap the controller of Talos.
-SET(CONTROLLER_NAME sot-talos-controller)
-ADD_LIBRARY(${CONTROLLER_NAME}
-  SHARED
-  sot-talos-controller.cpp
-  sot-talos-device.cpp
-)
-
-# Link the dynamic library containing the SoT with its dependencies.
-PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic-graph")
-PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic-graph-python")
-PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "sot-core")
-
-PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic_graph_bridge")
-
-
-IF(UNIX AND NOT APPLE)
-  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} ${Boost_LIBRARIES})
-ENDIF(UNIX AND NOT APPLE)
-
-INSTALL(TARGETS ${CONTROLLER_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-# build python submodule
-STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${CONTROLLER_NAME})
-SET(NEW_ENTITY_CLASS ${ENTITIES})
-DYNAMIC_GRAPH_PYTHON_MODULE("sot/talos/${PYTHON_LIBRARY_NAME}"
-  ${CONTROLLER_NAME}
-  sot-talos-${PYTHON_LIBRARY_NAME}-wrap
+  SET(DEVICE_NAME sot-talos-device)
+  ADD_LIBRARY(${DEVICE_NAME}
+    SHARED
+    sot-talos-device.cpp
   )
+
+  # Link the dynamic library containing the SoT with its dependencies.
+  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic-graph")
+  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic-graph-python")
+  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "sot-core")
+
+  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic_graph_bridge")
+
+  IF(UNIX AND NOT APPLE)
+    TARGET_LINK_LIBRARIES(${DEVICE_NAME} ${Boost_LIBRARIES})
+  ENDIF(UNIX AND NOT APPLE)
+
+  INSTALL(TARGETS ${DEVICE_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+  # build python submodule
+  STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${DEVICE_NAME})
+  SET(NEW_ENTITY_CLASS ${ENTITIES})
+  DYNAMIC_GRAPH_PYTHON_MODULE("sot/talos/${PYTHON_LIBRARY_NAME}"
+    ${DEVICE_NAME}
+    sot-talos-${PYTHON_LIBRARY_NAME}-wrap
+    )
+
+ENDMACRO()
+
+build_talos_device()
+
+# Add the library to wrap the controller of Pyrene.
+MACRO(build_talos_controller robotname)
+
+  SET(CONTROLLER_NAME sot-${robotname}-controller)
+  ADD_LIBRARY(${CONTROLLER_NAME}
+    SHARED
+    sot-talos-controller.cpp
+    sot-${robotname}-controller.cpp
+  )
+
+  # Link the dynamic library containing the SoT with its dependencies.
+  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic-graph")
+  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic-graph-python")
+  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "sot-core")
+
+  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic_graph_bridge")
+
+  ADD_DEPENDENCIES(${CONTROLLER_NAME} "sot-hrp2-device")
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "sot-hrp2-device")
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "ros_bridge")
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "ros_interpreter")
+  
+  IF(UNIX AND NOT APPLE)
+    TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} ${Boost_LIBRARIES})
+  ENDIF(UNIX AND NOT APPLE)
+
+  INSTALL(TARGETS ${CONTROLLER_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+ENDMACRO()
+
+build_talos_controller("pyrene")
 

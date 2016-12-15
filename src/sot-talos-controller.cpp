@@ -1,11 +1,14 @@
-/*
- * Copyright 2011,
+/* 
+ * Copyright 2016,
  *
+ * Rohan Budhiraja
  * Olivier Stasse
  *
  * LAAS, CNRS
  *
- * This file is part of talosController.
+ * This file is part of TALOSController.
+ * TALOSController is a free software, 
+ *
  */
 
 #include <sot/core/debug.hh>

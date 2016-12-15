@@ -1,4 +1,4 @@
-# Copyright 2011, Thomas Moulard, Olivier Stasse, JRL, CNRS/AIST
+# Copyright 2016, Thomas Moulard, Olivier Stasse, JRL, CNRS/AIST
 #
 # This file is part of sot-talos.
 # sot-talos is free software: you can redistribute it and/or
@@ -66,7 +66,45 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Add subdirectories.
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(tests)
+#ADD_SUBDIRECTORY(tests)
 
 SETUP_PROJECT_FINALIZE()
 SETUP_PROJECT_CPACK()
+cmake_minimum_required(VERSION 2.6)
+
+include(cmake/base.cmake)
+include(cmake/pthread.cmake)
+include(cmake/eigen.cmake)
+
+set(PROJECT_NAME sot-talos)
+set(PROJECT_DESCRIPTION "Sot Talos")
+set(PROJECT_URL "https://github.com/stack-of-tasks/sot-talos")
+
+# Disable -Werror on Unix for now.
+set(CXX_DISABLE_WERROR True)
+set(CMAKE_VERBOSE_MAKEFILE True)
+
+# Add std=c++11 flag
+if (UNIX)
+  SET(LFLAG -std=c++11)
+  SET(CMAKE_CXX_FLAGS "${LFLAG} ${CMAKE_CXX_FLAGS}")
+endif(UNIX)
+
+setup_project()
+
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+  #cmake_policy(SET CMP0053 OLD)
+endif(COMMAND cmake_policy)
+
+add_required_dependency("dynamic-graph")
+add_required_dependency("dynamic-graph-python")
+add_required_dependency("sot-core")
+add_required_dependency("dynamic_graph_bridge")
+
+search_for_eigen()
+
+# Subdirectories
+add_subdirectory(src)
+
+setup_project_finalize()
