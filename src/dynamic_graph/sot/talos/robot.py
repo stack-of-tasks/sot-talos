@@ -27,6 +27,18 @@ class Robot (AbstractHumanoidRobot):
     # half sitting position for the given  urdf model
     # coordinates should be given in depth 
     # moreover, we do not consider fixed joint
+
+    halfSittingFull = (0.0, 0.0,  1.018213,  0.00  ,  0.0, 0.0,                         #Free flyer
+                       0.000093,  0.000406, -0.449102,  0.859395, -0.448041, -0.001708, #Left Leg
+                       0.000093,  0.000406, -0.449102,  0.859395, -0.448041, -0.001708, #Right Leg
+                       0.0 ,  0.006761,                                                 #Chest
+                       0.25847 ,  0.173046, -0.0002, -0.525366, 0.0, -0.0,  0.1,        #Left Arm
+                       0.,0.,0.,0.,0.,0.,0.,                                            #Left gripper
+                       -0.25847 , -0.173046, 0.0002  , -0.525366, 0.0,  0.0,  0.1,      #Right Arm
+                       0.,0.,0.,0.,0.,0.,0.,                                            #Right gripper
+                       0.,  0.                                                          #Head
+                   )
+
     """
     halfSittingSmall = (
         # Free flyer
@@ -177,27 +189,23 @@ class Robot (AbstractHumanoidRobot):
 
         print "You ask for ", name, ". "
         rospack = RosPack()
-        self.urdfDir = rospack.get_path('talos_description') + '/urdf/'
-        if name == 'talos_small':
-            print "Loaded model is talos_small.urdf."
-            self.urdfName = 'talos_small.urdf'
-            self.halfSitting = self.halfSittingSmall
+        self.urdfDir = rospack.get_path('talos_description') + '/robot/'
+        if name == 'talos_full':
+            print "Loaded model is talos_full.urdf."
+            self.urdfName = 'talos_full.urdf'
+            self.halfSitting = self.halfSittingFull
         else:
-            print "Loaded model is talos.urdf."
-            self.urdfName = 'talos.urdf'
-            self.halfSitting = self.halfSittingAll
+            print "Load other talos urdfs by editing sot-talos/src/dynamic_graph/sot/talos/robot.py. Currently loading talos_full.urdf"
 
         self.OperationalPoints.append('waist')
         self.OperationalPoints.append('chest')
-        """
-        self.OperationalPointsMap = {'left-wrist'  : 'LWristPitch',
-                                     'right-wrist' : 'RWristPitch',
-                                     'left-ankle'  : 'LAnkleRoll',
-                                     'right-ankle' : 'RAnkleRoll',
-                                     'gaze'        : 'gaze_joint',
-                                     'waist'       : 'waist',
-                                     'chest'       : 'TrunkYaw'}
-        """
+        self.OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
+                                     'right-wrist' : 'arm_right_7_joint',
+                                     'left-ankle'  : 'leg_left_5_joint',
+                                     'right-ankle' : 'leg_right_5_joint',
+                                     'gaze'        : 'head_2_joint',
+                                     'waist'       : 'root_joint',
+                                     'chest'       : 'torso_2_joint'}
         self.device = device
 
         # correct the name of the body link
