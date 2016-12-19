@@ -31,24 +31,24 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
   robotState_ ("StackOfTasks(" + RobotName + ")::output(vector)::robotState"),
+  baseff_ (),
   accelerometerSOUT_
   ("StackOfTasks(" + RobotName + ")::output(vector)::accelerometer"),
   gyrometerSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::gyrometer"),
   currentSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::currents"),
   p_gainsSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::p_gains"),
   d_gainsSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::d_gains"),
-  mlforces (6),
+  dgforces_ (6),
   pose (),
   accelerometer_ (3),
   gyrometer_ (3),
-  baseff_ (),
   torques_()
 {
   sotDEBUGIN(25) ;
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
   signalRegistration (robotState_ << accelerometerSOUT_ << gyrometerSOUT_
                       << currentSOUT_ << p_gainsSOUT_ << d_gainsSOUT_);
-  ml::Vector data (3); data.setZero ();
+  dg::Vector data (3); data.setZero ();
   accelerometerSOUT_.setConstant (data);
   gyrometerSOUT_.setConstant (data);
   baseff_.resize(12);
@@ -87,8 +87,8 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     for(int i=0;i<4;++i)
     {
       for(int j=0;j<6;++j)
-        mlforces(j) = forcesIn[i*6+j];
-      forcesSOUT[i]->setConstant(mlforces);
+        dgforces_(j) = forcesIn[i*6+j];
+      forcesSOUT[i]->setConstant(dgforces_);
       forcesSOUT[i]->setTime (t);
     }
   }
@@ -108,12 +108,12 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
   if (it!=SensorsIn.end())
   {
     const vector<double>& anglesIn = it->second.getValues();
-    mlRobotState.resize (anglesIn.size () + 6);
+    dgRobotState_.resize (anglesIn.size () + 6);
     for (unsigned i = 0; i < 6; ++i)
-      mlRobotState (i) = 0.;
+      dgRobotState_ (i) = 0.;
     for (unsigned i = 0; i < anglesIn.size(); ++i)
-      mlRobotState (i + 6) = anglesIn[i];
-    robotState_.setConstant(mlRobotState);
+      dgRobotState_ (i + 6) = anglesIn[i];
+    robotState_.setConstant(dgRobotState_);
     robotState_.setTime(t);
   }
 
@@ -216,7 +216,7 @@ void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
   previousState_ = state_;
 
   // Specify the joint values for the controller.
-  if (anglesOut.size()!=state_.size()-6)
+  if ((int)anglesOut.size()!=state_.size()-6)
     anglesOut.resize(state_.size()-6);
 
   for(unsigned int i=6; i < state_.size();++i)
@@ -263,7 +263,7 @@ void SoTTalosDevice::updateRobotState(const vector<double> &anglesIn)
 {
   sotDEBUGIN(25) ;
   for (unsigned i = 0; i < anglesIn.size(); ++i)
-    mlRobotState (i + 6) = anglesIn[i];
-  robotState_.setConstant(mlRobotState);
+    dgRobotState_ (i + 6) = anglesIn[i];
+  robotState_.setConstant(dgRobotState_);
   sotDEBUGOUT(25) ;
 }

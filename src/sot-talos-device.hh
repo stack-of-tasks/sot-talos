@@ -77,33 +77,29 @@ protected:
   dg::Signal<dg::Vector, int> robotState_;
 
   /// Intermediate variables to avoid allocation during control
-  dg::Vector mlRobotState;
   std::vector<double> baseff_;
-
-  dynamicgraph::Signal<ml::Vector, int> robotState_;
 
   /// Accelerations measured by accelerometers
-  dynamicgraph::Signal <ml::Vector, int> accelerometerSOUT_;
+  dynamicgraph::Signal <dg::Vector, int> accelerometerSOUT_;
   /// Rotation velocity measured by gyrometers
-  dynamicgraph::Signal <ml::Vector, int> gyrometerSOUT_;
+  dynamicgraph::Signal <dg::Vector, int> gyrometerSOUT_;
   /// motor currents
-  dynamicgraph::Signal <ml::Vector, int> currentSOUT_;
+  dynamicgraph::Signal <dg::Vector, int> currentSOUT_;
 
   /// proportional and derivative position-control gains
-  dynamicgraph::Signal <ml::Vector, int> p_gainsSOUT_;};
+  dynamicgraph::Signal <dg::Vector, int> p_gainsSOUT_;
 
-  dynamicgraph::Signal <ml::Vector, int> d_gainsSOUT_;
+  dynamicgraph::Signal <dg::Vector, int> d_gainsSOUT_;
 
   /// Intermediate variables to avoid allocation during control
-  ml::Vector mlforces;
-  ml::Vector mlRobotState;
+  dg::Vector dgforces_;
+  dg::Vector dgRobotState_;
   dgsot::MatrixRotation pose;
-  ml::Vector accelerometer_;
-  ml::Vector gyrometer_;
-  std::vector<double> baseff_;
-  ml::Vector torques_;
-  ml::Vector currents_;
-  ml::Vector p_gains_;
-  ml::Vector d_gains_;
+  dg::Vector accelerometer_;
+  dg::Vector gyrometer_;
+  dg::Vector torques_;
+  dg::Vector currents_;
+  dg::Vector p_gains_;
+  dg::Vector d_gains_;
 };
 #endif /* _SOT_TalosDevice_H_*/

@@ -17,10 +17,11 @@
 
 #include "sot-pyrene-controller.hh"
 
+#define ROBOTNAME "Pyrene"
 const std::string SoTPyreneController::LOG_PYTHON_PYRENE="/tmp/PyreneController_python.out";
 
 SoTPyreneController::SoTPyreneController():
-  SoTTALOSController(ROBOTNAME)
+  SoTTalosController(ROBOTNAME)
 {
   startupPython();
   interpreter_->startRosService ();
@@ -28,7 +29,7 @@ SoTPyreneController::SoTPyreneController():
 
 void SoTPyreneController::startupPython()
 {
-  SoTTALOSController::startupPython();
+  SoTTalosController::startupPython();
   std::ofstream aof(LOG_PYTHON_PYRENE.c_str());
   runPython
     (aof,

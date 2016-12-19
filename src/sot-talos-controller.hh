@@ -30,6 +30,7 @@ class SoTTalosController: public
   static const std::string LOG_PYTHON;
   
   SoTTalosController();
+  SoTTalosController(const char robotName[]);
   virtual ~SoTTalosController();
 
   void setupSetSensors(std::map<std::string,dgsot::SensorValues> &sensorsIn);
@@ -54,6 +55,7 @@ class SoTTalosController: public
   
   virtual void startupPython();
     
+  void init();
 
   SoTTalosDevice device_;
 };

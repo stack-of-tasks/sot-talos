@@ -49,7 +49,17 @@ void workThread(SoTTalosController *aSoTTalos)
 SoTTalosController::SoTTalosController():
   device_(ROBOTNAME)
 {
+  init();
+}
 
+SoTTalosController::SoTTalosController(const char robotName[]):
+  device_(robotName)
+{
+  init();
+}
+
+void SoTTalosController::init()
+{
   std::cout << "Going through SoTTalosController." << std::endl;
   boost::thread thr(workThread,this);
   sotDEBUG(25) << __FILE__ << ":" 

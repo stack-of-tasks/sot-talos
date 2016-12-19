@@ -17,7 +17,7 @@
 #include "sot-talos-controller.hh"
 namespace dgsot=dynamicgraph::sot;
 
-class SoTPyreneController: public SoTTALOSController
+class SoTPyreneController: public SoTTalosController
 {
  public:
   static const std::string LOG_PYTHON_PYRENE;
