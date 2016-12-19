@@ -13,11 +13,10 @@
 #include <sot/core/debug.hh>
 
 /* Pyrene is the first TALOS */
-#define ROBOTNAME std::string("PYRENE")
+#define ROBOTNAME "Pyrene"
 
 #include "sot-pyrene-controller.hh"
 
-#define ROBOTNAME "Pyrene"
 const std::string SoTPyreneController::LOG_PYTHON_PYRENE="/tmp/PyreneController_python.out";
 
 SoTPyreneController::SoTPyreneController():

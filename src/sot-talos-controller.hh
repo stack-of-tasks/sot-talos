@@ -19,7 +19,7 @@
 #include <sot/core/abstract-sot-external-interface.hh>
 
 #include "sot-talos-device.hh"
-
+#include <dynamic_graph_bridge/ros_interpreter.hh>
 namespace dgsot=dynamicgraph::sot;
 
 class SoTTalosController: public 

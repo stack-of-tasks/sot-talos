@@ -166,20 +166,3 @@ startupPython()
   aof.close();
 }
 
-
-extern "C" 
-{
-  dgsot::AbstractSotExternalInterface * createSotExternalInterface()
-  {
-    return new SoTTalosController;
-  }
-}
-
-extern "C"
-{
-  void destroySotExternalInterface(dgsot::AbstractSotExternalInterface *p)
-  {
-    delete p;
-  }
-}
-
