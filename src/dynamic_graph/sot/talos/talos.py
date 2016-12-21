@@ -93,10 +93,10 @@ class Talos(AbstractHumanoidRobot):
 
         self.AdditionalFrames.append(
             ("leftFootForceSensor",
-             self.forceSensorInLeftAnkle, self.OperationalPointsMap("left-ankle")))
+             self.forceSensorInLeftAnkle, self.OperationalPointsMap["left-ankle"]))
         self.AdditionalFrames.append(
             ("rightFootForceSensor",
-             self.forceSensorInRightAnkle, self.OperationalPointsMap("right-ankle")))
+             self.forceSensorInRightAnkle, self.OperationalPointsMap["right-ankle"]))
 
         self.dynamic = RosRobotModel("{0}_dynamic".format(name))
         rospack = RosPack()
