@@ -58,10 +58,6 @@ dgsot::Device
 
 protected:
 
-  // Update output port with the control computed from the
-  // dynamic graph.
-  void updateRobotState(const std::vector<double> &anglesIn);
-
   /// \brief Current integration step.
   double timestep_;
   

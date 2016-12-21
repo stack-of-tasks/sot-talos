@@ -16,7 +16,7 @@
 
 import numpy as np
 from math import sqrt
-from dynamic_graph.sot.hrp2_14.robot import Robot
+from dynamic_graph.sot.pyrene.robot import Robot
 from dynamic_graph.sot.core import RPYToMatrix
 from dynamic_graph.sot.tools.se3 import SE3, SO3, R3
 
@@ -70,8 +70,8 @@ def convert (filename) :
         robot.com.recompute (t)
         robot.leftAnkle.position.recompute (t)
         robot.rightAnkle.position.recompute (t)
-        lf = SE3 (robot.leftAnkle.position.value) * R3 (0., 0., -0.105)
-        rf = SE3 (robot.rightAnkle.position.value) * R3 (0., 0., -0.105)
+        lf = SE3 (robot.leftAnkle.position.value) * R3 (0., 0., -0.107)
+        rf = SE3 (robot.rightAnkle.position.value) * R3 (0., 0., -0.107)
         # find support foot
         rpy2matrix.sin.value = tuple (hip [1:])
         rpy2matrix.sout.recompute (t)
@@ -109,9 +109,9 @@ def convert (filename) :
         forceRightFoot.append ((0.,0.,fr,0.,0.,0.,))
         t += 1
         fixedLeftFoot = \
-            SE3 (robot.leftAnkle.position.value) * R3 (0., 0., -0.105)
+            SE3 (robot.leftAnkle.position.value) * R3 (0., 0., -0.107)
         fixedRightFoot = \
-            SE3 (robot.rightAnkle.position.value) * R3 (0., 0., -0.105)
+            SE3 (robot.rightAnkle.position.value) * R3 (0., 0., -0.107)
 
     filePos = open (filename + '.posture', 'w')
     fileLa = open (filename + '.la', 'w')
@@ -168,4 +168,4 @@ def convert (filename) :
     fileFr.close ()
 
 if __name__ == '__main__':
-    convert ('/opt/grx3.0/HRP2LAAS/etc/walkfwd')
+    #convert ('/opt/grx3.0/HRP2LAAS/etc/walkfwd')

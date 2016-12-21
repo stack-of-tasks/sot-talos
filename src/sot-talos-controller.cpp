@@ -28,7 +28,6 @@ boost::condition_variable cond;
 boost::mutex mut;
 bool data_ready;
 
-#define ROBOTNAME std::string("TALOS")
 
 void workThread(SoTTalosController *aSoTTalos)
 {
@@ -46,8 +45,8 @@ void workThread(SoTTalosController *aSoTTalos)
   ros::waitForShutdown();
 }
 
-SoTTalosController::SoTTalosController():
-  device_(ROBOTNAME)
+SoTTalosController::SoTTalosController(std::string RobotName):
+  device_(RobotName)
 {
   init();
 }
@@ -69,8 +68,6 @@ void SoTTalosController::init()
   boost::unique_lock<boost::mutex> lock(mut);
   cond.wait(lock);
 
-  startupPython();
-  interpreter_->startRosService ();
 }
 
 SoTTalosController::~SoTTalosController()
@@ -158,11 +155,6 @@ startupPython()
   // real-time thread. See roscpp documentation for more
   // information.
   dynamicgraph::rosInit (true);
-
-  runPython
-    (aof,
-     "from dynamic_graph.sot.talos.prologue import robot",
-     *interpreter_);
   aof.close();
 }
 

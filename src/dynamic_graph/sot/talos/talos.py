@@ -17,12 +17,11 @@
 from __future__ import print_function
 
 import numpy as np
-from dynamic_graph.sot.core import \
-    FeatureGeneric, FeatureJointLimits, Task, Constraint, GainAdaptive, SOT
-from dynamic_graph.sot.dynamics import AngleEstimator
-from dynamic_graph import enableTrace, plug
 
-from dynamic_graph.sot.dynamics.humanoid_robot import AbstractHumanoidRobot
+from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import AbstractHumanoidRobot
+from dynamic_graph.ros import RosRobotModel
+import pinocchio as se3
+from rospkg import RosPack
 
 # Internal helper tool.
 def matrixToTuple(M):
@@ -34,18 +33,19 @@ def matrixToTuple(M):
 
 class Talos(AbstractHumanoidRobot):
     """
-    This class instanciates a Talos robot
+    This class defines a Talos robot
     """
 
     forceSensorInLeftAnkle =  ((1.,0.,0.,0.),
                                (0.,1.,0.,0.),
-                               (0.,0.,1.,-0.105),
+                               (0.,0.,1.,-0.107),
                                (0.,0.,0.,1.))
     forceSensorInRightAnkle = ((1.,0.,0.,0.),
                                (0.,1.,0.,0.),
-                               (0.,0.,1.,-0.105),
+                               (0.,0.,1.,-0.107),
                                (0.,0.,0.,1.))
-
+    """
+    TODO: Confirm the position and existence of these sensors
     accelerometerPosition = np.matrix ((
             (1., 0., 0., -.13,),
             (0., 1., 0., 0.,),
@@ -59,50 +59,57 @@ class Talos(AbstractHumanoidRobot):
             (0., 0., 1., .118,),
             (0., 0., 0., 1.,),
             ))
-
+    """
     def smallToFull(self, config):
-        res = (config + 10*(0.,))
+        #Gripper position in full configuration: 27:34, and 41:48
+        #Small configuration: 36 DOF
+        #Full configuration: 50 DOF
+        res = config[0:27] + 7*(0.,) + config[27:34]+ 7*(0.,)+config[34:]
         return res
 
-    def __init__(self, name, modelDir, xmlDir, device, dynamicType,
-                 tracer = None):
+    def __init__(self, name, device = None, tracer = None):
         AbstractHumanoidRobot.__init__ (self, name, tracer)
-
         self.OperationalPoints.append('waist')
         self.OperationalPoints.append('chest')
         self.device = device
-        self.modelDir = modelDir
-        self.modelName = 'talos.wrl'
-        self.specificitiesPath = xmlDir + '/TALOSSpecificitiesSmall.xml'
-        self.jointRankPath = xmlDir + '/TALOSLinkJointRankSmall.xml'
 
+        """
+        TODO: Confirm these sensors
         self.AdditionalFrames.append(
             ("accelerometer",
              matrixToTuple(self.accelerometerPosition), "chest"))
         self.AdditionalFrames.append(
             ("gyrometer",
              matrixToTuple(self.gyrometerPosition), "chest"))
+        """
+
+        self.OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
+                                     'right-wrist' : 'arm_right_7_joint',
+                                     'left-ankle'  : 'leg_left_5_joint',
+                                     'right-ankle' : 'leg_right_5_joint',
+                                     'gaze'        : 'head_2_joint',
+                                     'waist'       : 'root_joint',
+                                     'chest'       : 'torso_2_joint'}
+
         self.AdditionalFrames.append(
             ("leftFootForceSensor",
-             self.forceSensorInLeftAnkle, "left-ankle"))
+             self.forceSensorInLeftAnkle, self.OperationalPointsMap("left-ankle")))
         self.AdditionalFrames.append(
             ("rightFootForceSensor",
-            self.forceSensorInRightAnkle, "right-ankle"))
+             self.forceSensorInRightAnkle, self.OperationalPointsMap("right-ankle")))
 
-        self.dynamic = self.loadModelFromJrlDynamics(
-            self.name + '_dynamic',
-            modelDir,
-            self.modelName,
-            self.specificitiesPath,
-            self.jointRankPath,
-            dynamicType)
+        self.dynamic = RosRobotModel("{0}_dynamic".format(name))
+        rospack = RosPack()
+        self.urdfPath = rospack.get_path('talos_description') + '/urdf/talos.urdf'
 
+        self.pinocchioModel = se3.buildModelFromUrdf(self.urdfPath, se3.JointModelFreeFlyer())
+        self.pinocchioData = self.pinocchioModel.createData()
+        self.dynamic.setModel(self.pinocchioModel)
+        self.dynamic.setData(self.pinocchioData)
         self.dimension = self.dynamic.getDimension()
-        
         self.plugVelocityFromDevice = True
-
         if self.dimension != len(self.halfSitting):
             raise RuntimeError("Dimension of half-sitting: {0} differs from dimension of robot: {1}".format (len(self.halfSitting), self.dimension))
         self.initializeRobot()
-
+        self.dynamic.displayModel()
 __all__ = [Talos]

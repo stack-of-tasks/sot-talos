@@ -13,10 +13,10 @@
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
-print("Prologue HRP2-14")
+print("Prologue Pyrene TALOS Robot")
 
 from dynamic_graph.entity import PyEntityFactoryClass
-from dynamic_graph.sot.hrp2_14.robot import Robot
+from dynamic_graph.sot.pyrene.robot import Robot
 
 # Create the device.
 # This entity behaves exactly like robotsimu except:
@@ -26,7 +26,7 @@ from dynamic_graph.sot.hrp2_14.robot import Robot
 Device = PyEntityFactoryClass('Device')
 
 # Create the robot using the device.
-robot = Robot(name = 'robot', device = Device('HRP2LAAS'))
+robot = Robot(name = 'robot', device = Device('PYRENE'))
 
 robot.dynamic.com.recompute (0)
 _com = robot.dynamic.com.value

@@ -24,7 +24,7 @@ INCLUDE(cmake/ros.cmake)
 
 SET(PROJECT_NAME sot-talos)
 SET(PROJECT_DESCRIPTION "dynamic-graph package for Talos robot")
-SET(PROJECT_URL "http://github.com/laas/sot-talos")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/sot-talos")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
@@ -44,7 +44,7 @@ ADD_REQUIRED_DEPENDENCY("pinocchio")
 
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-dynamic >= 3.1")
+ADD_REQUIRED_DEPENDENCY("sot-dynamic-pinocchio >= 3.1")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
 
 ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge_msgs")

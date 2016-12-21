@@ -31,6 +31,7 @@ class SoTTalosController: public
   
   SoTTalosController();
   SoTTalosController(const char robotName[]);
+  SoTTalosController(std::string robotName);
   virtual ~SoTTalosController();
 
   void setupSetSensors(std::map<std::string,dgsot::SensorValues> &sensorsIn);

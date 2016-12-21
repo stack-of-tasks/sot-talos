@@ -33,4 +33,4 @@ class SoTPyreneController: public SoTTalosController
 
 };
 
-#endif /* _SOT_HRP2Controller_H_ */
+#endif /* _SOTTalosController_H_ */

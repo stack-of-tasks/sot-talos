@@ -31,7 +31,6 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
   robotState_ ("StackOfTasks(" + RobotName + ")::output(vector)::robotState"),
-  baseff_ (),
   accelerometerSOUT_
   ("StackOfTasks(" + RobotName + ")::output(vector)::accelerometer"),
   gyrometerSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::gyrometer"),
@@ -42,7 +41,8 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   pose (),
   accelerometer_ (3),
   gyrometer_ (3),
-  torques_()
+  torques_(),
+  baseff_ ()
 {
   sotDEBUGIN(25) ;
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
@@ -51,20 +51,20 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   dg::Vector data (3); data.setZero ();
   accelerometerSOUT_.setConstant (data);
   gyrometerSOUT_.setConstant (data);
-  baseff_.resize(12);
+  baseff_.resize(7);
 
   using namespace dynamicgraph::command;
   std::string docstring;
   /* Command increment. */
   docstring =
-    "\n"
-    "    Integrate dynamics for time step provided as input\n"
-    "\n"
-    "      take one floating point number as input\n"
-    "\n";
+      "\n"
+      "    Integrate dynamics for time step provided as input\n"
+      "\n"
+      "      take one floating point number as input\n"
+      "\n";
   addCommand("increment",
-	     makeCommandVoid1((Device&)*this,
-			      &Device::increment, docstring));
+             makeCommandVoid1((Device&)*this,
+                              &Device::increment, docstring));
   
   sotDEBUGOUT(25);
 }
@@ -93,6 +93,7 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     }
   }
 
+  //TODO: Confirm if this can be made quaternion
   it = SensorsIn.find("attitude");
   if (it!=SensorsIn.end())
   {
@@ -256,14 +257,5 @@ void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
 
   controlOut["baseff"].setValues(baseff_);
 
-  sotDEBUGOUT(25) ;
-}
-
-void SoTTalosDevice::updateRobotState(const vector<double> &anglesIn)
-{
-  sotDEBUGIN(25) ;
-  for (unsigned i = 0; i < anglesIn.size(); ++i)
-    dgRobotState_ (i + 6) = anglesIn[i];
-  robotState_.setConstant(dgRobotState_);
   sotDEBUGOUT(25) ;
 }

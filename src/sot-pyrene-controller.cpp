@@ -13,7 +13,7 @@
 #include <sot/core/debug.hh>
 
 /* Pyrene is the first TALOS */
-#define ROBOTNAME "Pyrene"
+#define ROBOTNAME std::string("PYRENE")
 
 #include "sot-pyrene-controller.hh"
 
