@@ -10,9 +10,14 @@
 #-----------------------------------------------------------------------------
 #SET THE PATH TO THE URDF AND MESHES
 #Define robotName, urdfpath and initialConfig
+
+#Make sure talos_description is in the ROS_PACKAGE_PATH
+from rospkg import RosPack
+rospack = RosPack()
+urdfPath = rospack.get_path('talos_description')+"/robots/talos_full_collision.urdf"
+urdfDir = [rospack.get_path('talos_description')+"/../"]
+
 dt = 5e-3
-urdfPath = "/local/rbudhira/git/pal-robotics/talos_robot/talos_description/robots/talos_full_collision.urdf"
-urdfDir = ["/local/rbudhira/git/pal-robotics/talos_robot"]
 robotName = 'TALOS'
 OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
                          'right-wrist' : 'arm_right_7_joint',
@@ -21,17 +26,16 @@ OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
                          'gaze'        : 'head_2_joint',
                          'waist'       : 'root_joint',
                          'chest'       : 'torso_2_joint'}
-initialConfig = (0., 0., 0.648702, 0., 0. , 0.,                  # Free flyer
-                 0., 0., -0.453786, 0.872665, -0.418879, 0.,     # Left Leg
-                 0., 0., -0.453786, 0.872665, -0.418879, 0.,     # Right Leg
-                 0., 0.,                                         # Chest
-                 0.261799, 0.17453, 0., -0.523599, 0., 0., 0.1,  # Left Arm
-                 0., 0.,0.,0., 0.,0.,0.,                         # Left gripper
-                 -0.261799, -0.17453, 0., -0.523599, 0., 0., 0.1,  # Right Arm
-                 0., 0.,0.,0., 0.,0.,0.,                         # Right gripper
-                 0., 0.                                          # Head
+initialConfig = (0.0, 0.0,  1.018213,  0.00  ,  0.0, 0.0,                         #Free flyer
+                 0.000093,  0.000406, -0.449102,  0.859395, -0.448041, -0.001708, #Left Leg
+                 0.000093,  0.000406, -0.449102,  0.859395, -0.448041, -0.001708, #Right Leg
+                 0.0 ,  0.006761,                                                 #Chest
+                 0.25847 ,  0.173046, -0.0002, -0.525366, 0.0, -0.0,  0.1,        #Left Arm
+                 0.,0.,0.,0.,0.,0.,0.,                                            #Left gripper
+                 -0.25847 , -0.173046, 0.0002  , -0.525366, 0.0,  0.0,  0.1,      #Right Arm
+                 0.,0.,0.,0.,0.,0.,0.,                                            #Right gripper
+                 0.,  0.                                                          #Head
              )
-
 
 #-----------------------------------------------------------------------------
 #---- ROBOT SPECIFICATIONS----------------------------------------------------
