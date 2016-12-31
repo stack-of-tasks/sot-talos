@@ -12,10 +12,15 @@
 #Define robotName, urdfpath and initialConfig
 
 #Make sure talos_description is in the ROS_PACKAGE_PATH
-from rospkg import RosPack
-rospack = RosPack()
-urdfPath = rospack.get_path('talos_description')+"/robots/talos_full_collision.urdf"
-urdfDir = [rospack.get_path('talos_description')+"/../"]
+#from rospkg import RosPack
+#rospack = RosPack()
+#urdfPath = rospack.get_path('talos_description')+"/robots/talos_full_collision.urdf"
+#urdfDir = [rospack.get_path('talos_description')+"/../"]
+
+urdfPath = "@TALOS_DATA_DATAROOTDIR@/talos-data"+"/robots/talos_full_collision.urdf"
+urdfDir = ["@TALOS_DATA_DATAROOTDIR@/talos-data"+"/../"]
+
+
 
 dt = 5e-3
 robotName = 'TALOS'
