@@ -70,10 +70,12 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ADD_SUBDIRECTORY(src)
 
 IF(TALOS_DATA_FOUND)
-  CONFIGURE_FILE(
-    ${PROJECT_SOURCE_DIR}/tests/kinetalos.py.cmake
-    ${PROJECT_SOURCE_DIR}/tests/kinetalos.py
-    )
+  FOREACH(py_filename kinetalos katana_holding)
+    CONFIGURE_FILE(
+      ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
+      ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
+      )
+    ENDFOREACH(file)
 ENDIF(TALOS_DATA_FOUND)
 
 
