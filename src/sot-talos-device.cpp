@@ -23,6 +23,7 @@
 
 #define DBGFILE "/tmp/sot-talos-device.txt"
 
+#if 1
 #define RESETDEBUG5() { std::ofstream DebugFile;	\
     DebugFile.open(DBGFILE,std::ofstream::out);		\
     DebugFile.close();}
@@ -36,6 +37,12 @@
     DebugFile.open(DBGFILE,std::ofstream::app); \
     DebugFile << x << std::endl;		\
     DebugFile.close();}
+#else
+// Void the macro
+#define RESETDEBUG5()
+#define ODEBUG5FULL(x)
+#define ODEBUG5(x)
+#endif
 
 #include <sot/core/debug.hh>
 
