@@ -14,6 +14,29 @@
 #include <fstream>
 #include <map>
 
+#if DEBUG
+#define ODEBUG(x) std::cout << x << std::endl
+#else
+#define ODEBUG(x)
+#endif
+#define ODEBUG3(x) std::cout << x << std::endl
+
+#define DBGFILE "/tmp/sot-talos-device.txt"
+
+#define RESETDEBUG5() { std::ofstream DebugFile;	\
+    DebugFile.open(DBGFILE,std::ofstream::out);		\
+    DebugFile.close();}
+#define ODEBUG5FULL(x) { std::ofstream DebugFile;	\
+    DebugFile.open(DBGFILE,std::ofstream::app);		\
+    DebugFile << __FILE__ << ":"			\
+	      << __FUNCTION__ << "(#"			\
+	      << __LINE__ << "):" << x << std::endl;	\
+    DebugFile.close();}
+#define ODEBUG5(x) { std::ofstream DebugFile;	\
+    DebugFile.open(DBGFILE,std::ofstream::app); \
+    DebugFile << x << std::endl;		\
+    DebugFile.close();}
+
 #include <sot/core/debug.hh>
 
 #include "sot-talos-device.hh"
@@ -24,13 +47,14 @@ using namespace std;
 
 const double SoTTalosDevice::TIMESTEP_DEFAULT = 0.005;
 
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(SoTTalosDevice,"Device");
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(SoTTalosDevice,"DeviceTalos");
 
 SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   dgsot::Device(RobotName),
   timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
   robotState_ ("StackOfTasks(" + RobotName + ")::output(vector)::robotState"),
+  baseff_ (),
   accelerometerSOUT_
   ("StackOfTasks(" + RobotName + ")::output(vector)::accelerometer"),
   gyrometerSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::gyrometer"),
@@ -41,9 +65,9 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   pose (),
   accelerometer_ (3),
   gyrometer_ (3),
-  torques_(),
-  baseff_ ()
+  torques_()
 {
+  RESETDEBUG5();
   sotDEBUGIN(25) ;
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
   signalRegistration (robotState_ << accelerometerSOUT_ << gyrometerSOUT_
@@ -105,7 +129,7 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     attitudeSOUT.setTime (t);
   }
 
-  it = SensorsIn.find("joints");
+  it = SensorsIn.find("motor-angles");
   if (it!=SensorsIn.end())
   {
     const vector<double>& anglesIn = it->second.getValues();
@@ -204,6 +228,7 @@ void SoTTalosDevice::cleanupSetSensors(map<string, dgsot::SensorValues> &Sensors
 
 void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
 {
+  ODEBUG5FULL("start");
   sotDEBUGIN(25) ;
   vector<double> anglesOut;
   anglesOut.resize(state_.size());
@@ -214,6 +239,9 @@ void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
   sotDEBUG (25) << "diff  = " << ((previousState_.size() == state_.size())?
 				  (state_ - previousState_) : state_ ) 
 		<< std::endl;
+  ODEBUG5FULL("state = "<< state_);
+  ODEBUG5FULL("diff  = " << ((previousState_.size() == state_.size())?
+			     (state_ - previousState_) : state_ ) );
   previousState_ = state_;
 
   // Specify the joint values for the controller.
@@ -256,6 +284,6 @@ void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
   baseff_[6] = qt_.z();
 
   controlOut["baseff"].setValues(baseff_);
-
+  ODEBUG5FULL("end");
   sotDEBUGOUT(25) ;
 }
