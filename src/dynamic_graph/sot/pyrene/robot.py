@@ -29,16 +29,14 @@ class Robot (Talos):
                    0.000093,  0.000406, -0.449102,  0.859395, -0.448041, -0.001708, #Right Leg
                    0.0 ,  0.006761,                                                 #Chest
                    0.25847 ,  0.173046, -0.0002, -0.525366, 0.0, -0.0,  0.1,        #Left Arm
-                   0.,0.,0.,0.,0.,0.,0.,                                            #Left gripper
-                   -0.25847 , -0.173046, 0.0002  , -0.525366, 0.0,  0.0,  0.1,      #Right Arm
-                   0.,0.,0.,0.,0.,0.,0.,                                            #Right gripper
-                   0.,  0.                                                          #Head
+                     -0.25847 , -0.173046, 0.0002  , -0.525366, 0.0,  0.0,  0.1,      #Right Arm
+                     0.,  0.                                                          #Head
                )
 
     def __init__(self, name,
                  device = None,
                  tracer = None):
-        Talos.__init__(self,name,tracer)
+        Talos.__init__(self,name,self.halfSitting,device,tracer)
         """
         TODO:Confirm these values
         # Define camera positions w.r.t gaze.
