@@ -45,6 +45,10 @@ try:
     launchScript(initCode,'initialize SoT')
     raw_input("Wait before starting the dynamic graph")
     runCommandStartDynamicGraph()
+    raw_input("Wait before moving the hand")
+    runCommandClient("target = (0.5,-0.2,1.0)")
+    runCommandClient("gotoNd(taskRH,target,'111',(4.9,0.9,0.01,0.9))")
+    runCommandClient("sot.push(taskRH.task.name)")
 
 except rospy.ServiceException, e:
     rospy.logerr("Service call failed: %s" % e)
