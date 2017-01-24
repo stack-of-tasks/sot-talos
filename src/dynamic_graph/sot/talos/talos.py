@@ -73,8 +73,8 @@ class Talos(AbstractHumanoidRobot):
     def __init__(self, name, initialConfig, device = None, tracer = None):
         self.OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
                                      'right-wrist' : 'arm_right_7_joint',
-                                     'left-ankle'  : 'leg_left_5_joint',
-                                     'right-ankle' : 'leg_right_5_joint',
+                                     'left-ankle'  : 'leg_left_6_joint',
+                                     'right-ankle' : 'leg_right_6_joint',
                                      'gaze'        : 'head_2_joint',
                                      'waist'       : 'root_joint',
                                      'chest'       : 'torso_2_joint'}
