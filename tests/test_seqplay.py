@@ -81,6 +81,7 @@ plug(sot.control,robot.device.control)
 # DEFINE POSTURE TASK
 from dynamic_graph.sot.core import Task, FeatureGeneric, GainAdaptive
 from dynamic_graph.sot.core.meta_tasks import setGain
+from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from numpy import identity, hstack, zeros
 
 task_name = "posture_task"
