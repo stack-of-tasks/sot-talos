@@ -36,15 +36,16 @@ try:
     
     rospy.loginfo("Stack of Tasks launched")
 
-    # runCommandClient("from dynamic_graph import plug")
-    # runCommandClient("from dynamic_graph.sot.core import SOT")
-    # runCommandClient("sot = SOT('sot')")
-    # runCommandClient("sot.setSize(robot.dynamic.getDimension())")
-    # runCommandClient("plug(sot.control,robot.device.control)")
 
     launchScript(initCode,'initialize SoT')
     raw_input("Wait before starting the dynamic graph")
     runCommandStartDynamicGraph()
+    raw_input("Wait before pushing the posture task in SoT")
+    runCommandClient("sot.push(taskPosture.name)")
+    runCommandClient("robot.device.control.recompute(0)")
+
+    raw_input("Wait before starting the seqplay")
+    runCommandClient("aSimpleSeqPlay.start()")
 
 except rospy.ServiceException, e:
     rospy.logerr("Service call failed: %s" % e)
