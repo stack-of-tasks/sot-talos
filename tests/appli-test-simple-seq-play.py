@@ -26,7 +26,7 @@ taskPosture.add(taskPosture.feature.name)
 
 # Create the sequence player
 aSimpleSeqPlay = SimpleSeqPlay('aSimpleSeqPlay')
-aSimpleSeqPlay.load("/home/ostasse/devel-src/Talos/src/pyrene-motions/grabHandrail15/stairs_15cm_handrail_grab_actuated")
+aSimpleSeqPlay.load("/opt/openrobots/share/pyrene-motions/grabHandrail15/stairs_15cm_handrail_grab_actuated")
 aSimpleSeqPlay.setTimeToStart(10.0)
 # Connects the sequence player to the posture task
 from dynamic_graph.sot.core import Selec_of_vector
