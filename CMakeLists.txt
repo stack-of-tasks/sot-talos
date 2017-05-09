@@ -73,11 +73,16 @@ IF(TALOS_DATA_FOUND)
   FOREACH(py_filename kinetalos katana_holding)
     CONFIGURE_FILE(
       ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
-      ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
+      ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
+      )
+    INSTALL(FILES
+      ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
+      RUNTIME
+      DESTINATION
+      ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/tests
       )
   ENDFOREACH(py_filename)
 ENDIF(TALOS_DATA_FOUND)
-
 
 SETUP_PROJECT_FINALIZE()
 SETUP_PROJECT_CPACK()
