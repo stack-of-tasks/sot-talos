@@ -77,7 +77,6 @@ IF(TALOS_DATA_FOUND)
       )
     INSTALL(FILES
       ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
-      RUNTIME
       DESTINATION
       ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/tests
       )
