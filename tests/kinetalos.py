@@ -125,4 +125,4 @@ def runner(n):
         robot.device.increment(dt)
         pinocchioRobot.display(fromSotToPinocchio(robot.device.state.value))
 
-runner(3000)
+#runner(3000)

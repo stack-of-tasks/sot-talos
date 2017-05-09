@@ -75,7 +75,7 @@ IF(TALOS_DATA_FOUND)
       ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
       ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
       )
-    ENDFOREACH(file)
+  ENDFOREACH(py_filename)
 ENDIF(TALOS_DATA_FOUND)
 
 
