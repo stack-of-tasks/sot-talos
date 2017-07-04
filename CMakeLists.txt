@@ -78,7 +78,7 @@ IF(TALOS_DATA_FOUND)
     INSTALL(FILES
       ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
       DESTINATION
-      ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/tests
+      ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
       )
   ENDFOREACH(py_filename)
 ENDIF(TALOS_DATA_FOUND)

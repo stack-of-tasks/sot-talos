@@ -81,8 +81,8 @@ class Talos(AbstractHumanoidRobot):
 
         from rospkg import RosPack
         rospack = RosPack()
-        urdfPath = rospack.get_path('talos_description')+"/robots/talos_reduced.urdf"
-        urdfDir = [rospack.get_path('talos_description')+"/../"]
+        urdfPath = rospack.get_path('talos_data')+"/robots/talos_reduced.urdf"
+        urdfDir = [rospack.get_path('talos_data')+"/../"]
 
         # Create a wrapper to access the dynamic model provided through an urdf file.
         from pinocchio.robot_wrapper import RobotWrapper
