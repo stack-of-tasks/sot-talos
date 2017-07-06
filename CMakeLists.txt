@@ -50,7 +50,7 @@ ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge_msgs")
 ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge >= 3.0")
 
-ADD_OPTIONAL_DEPENDENCY("talos-data")
+ADD_OPTIONAL_DEPENDENCY("talos_data")
 
 # Search for dependencies.
 # Boost
