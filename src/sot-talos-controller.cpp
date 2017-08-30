@@ -116,6 +116,18 @@ getControl(map<string,dgsot::ControlValues> &controlOut)
 }
 
 void SoTTalosController::
+setNoIntegration(void)
+{
+  device_.setNoIntegration();
+}
+
+void SoTTalosController::
+setSecondOrderIntegration(void)
+{
+  device_.setSecondOrderIntegration();
+}
+
+void SoTTalosController::
 runPython(std::ostream& file,
 	  const std::string& command,
 	  dynamicgraph::Interpreter& interpreter)

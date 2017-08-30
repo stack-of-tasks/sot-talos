@@ -258,7 +258,7 @@ void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
 
   for(unsigned int i=6; i < state_.size();++i)
     anglesOut[i-6] = state_(i);
-  controlOut["joints"].setValues(anglesOut);
+  controlOut["control"].setValues(anglesOut);
   // Read zmp reference from input signal if plugged
   int time = controlSIN.getTime ();
   zmpSIN.recompute (time + 1);
