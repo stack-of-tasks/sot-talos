@@ -78,13 +78,12 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   RESETDEBUG5();
   sotDEBUGIN(25) ;
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
-  signalRegistration (robotState_ << accelerometerSOUT_ << gyrometerSOUT_
+  signalRegistration (accelerometerSOUT_ << gyrometerSOUT_
                       << currentSOUT_ << p_gainsSOUT_ << d_gainsSOUT_);
   dg::Vector data (3); data.setZero ();
   accelerometerSOUT_.setConstant (data);
   gyrometerSOUT_.setConstant (data);
   baseff_.resize(7);
-
   using namespace dynamicgraph::command;
   std::string docstring;
   /* Command increment. */
@@ -97,7 +96,6 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   addCommand("increment",
              makeCommandVoid1((Device&)*this,
                               &Device::increment, docstring));
-  
   sotDEBUGOUT(25);
 }
 
