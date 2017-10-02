@@ -61,7 +61,6 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   dgsot::Device(RobotName),
   timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
-  robotState_ ("StackOfTasks(" + RobotName + ")::output(vector)::robotState"),
   baseff_ (),
   accelerometerSOUT_
   ("StackOfTasks(" + RobotName + ")::output(vector)::accelerometer"),

@@ -64,14 +64,6 @@ protected:
   /// \brief Previous robot configuration.
   dg::Vector previousState_;
   
-  /// \brief Robot state provided by OpenHRP.
-  ///
-  /// This corresponds to the real encoders values and take into
-  /// account the stabilization step. Therefore, this usually
-  /// does *not* match the state control input signal.
-  ///
-  dg::Signal<dg::Vector, int> robotState_;
-
   /// Intermediate variables to avoid allocation during control
   std::vector<double> baseff_;
 
