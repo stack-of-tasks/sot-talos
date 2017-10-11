@@ -72,16 +72,32 @@ protected:
   /// Rotation velocity measured by gyrometers
   dynamicgraph::Signal <dg::Vector, int> gyrometerSOUT_;
   /// motor currents
-  dynamicgraph::Signal <dg::Vector, int> currentSOUT_;
+  dynamicgraph::Signal <dg::Vector, int> currentsSOUT_;
+  /// joint angles
+  dynamicgraph::Signal <dg::Vector, int> joint_anglesSOUT_;
+  /// motor angles
+  dynamicgraph::Signal <dg::Vector, int> motor_anglesSOUT_;
 
   /// proportional and derivative position-control gains
   dynamicgraph::Signal <dg::Vector, int> p_gainsSOUT_;
 
   dynamicgraph::Signal <dg::Vector, int> d_gainsSOUT_;
 
+  /// Protected methods for internal variables filling
+  void setSensorsForce(std::map<std::string,dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsIMU(std::map<std::string,dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsEncoders(std::map<std::string,dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsVelocities(std::map<std::string,dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsTorquesCurrents(std::map<std::string,dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsGains(std::map<std::string,dgsot::SensorValues> &SensorsIn, int t);
+  
   /// Intermediate variables to avoid allocation during control
   dg::Vector dgforces_;
-  dg::Vector dgRobotState_;
+  dg::Vector dgRobotState_; // motor-angles
+  dg::Vector joint_angles_; // joint-angles
+  dg::Vector motor_angles_; // motor-angles
+  dg::Vector dgRobotVelocity_; // motor velocities
+  dg::Vector velocities_; // motor velocities
   dgsot::MatrixRotation pose;
   dg::Vector accelerometer_;
   dg::Vector gyrometer_;

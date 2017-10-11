@@ -62,23 +62,25 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
   baseff_ (),
-  accelerometerSOUT_
-  ("StackOfTasks(" + RobotName + ")::output(vector)::accelerometer"),
+  accelerometerSOUT_("StackOfTasks(" + RobotName + ")::output(vector)::accelerometer"),
   gyrometerSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::gyrometer"),
-  currentSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::currents"),
+  currentsSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::currents"),
+  joint_anglesSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::joint_angles"),
+  motor_anglesSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::motor_angles"),
   p_gainsSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::p_gains"),
   d_gainsSOUT_ ("StackOfTasks(" + RobotName + ")::output(vector)::d_gains"),
   dgforces_ (6),
-  pose (),
   accelerometer_ (3),
-  gyrometer_ (3),
-  torques_()
+  gyrometer_ (3)
 {
   RESETDEBUG5();
   sotDEBUGIN(25) ;
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
   signalRegistration (accelerometerSOUT_ << gyrometerSOUT_
-                      << currentSOUT_ << p_gainsSOUT_ << d_gainsSOUT_);
+                      << currentsSOUT_ 
+		      << joint_anglesSOUT_ 
+		      << motor_anglesSOUT_
+		      << p_gainsSOUT_ << d_gainsSOUT_);
   dg::Vector data (3); data.setZero ();
   accelerometerSOUT_.setConstant (data);
   gyrometerSOUT_.setConstant (data);
@@ -101,12 +103,9 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
 SoTTalosDevice::~SoTTalosDevice()
 { }
 
-void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
+void SoTTalosDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn, int t)
 {
-  sotDEBUGIN(25) ;
   map<string,dgsot::SensorValues>::iterator it;
-  int t = stateSOUT.getTime () + 1;
-
   it = SensorsIn.find("forces");
   if (it!=SensorsIn.end())
   {
@@ -115,13 +114,22 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     const vector<double>& forcesIn = it->second.getValues();
     for(int i=0;i<4;++i)
     {
+      std::cout << "Force sensor " << i << std::endl;
       for(int j=0;j<6;++j)
-        dgforces_(j) = forcesIn[i*6+j];
+	{
+	  dgforces_(j) = forcesIn[i*6+j];
+	  std::cout << "Force value " << j << ":" << dgforces_(j) << std::endl;
+	}
       forcesSOUT[i]->setConstant(dgforces_);
       forcesSOUT[i]->setTime (t);
     }
   }
+  else std::cout << "No forces in the map" << std::endl;
+}
 
+void SoTTalosDevice::setSensorsIMU(map<string,dgsot::SensorValues> &SensorsIn, int t)
+{
+  map<string,dgsot::SensorValues>::iterator it;
   //TODO: Confirm if this can be made quaternion
   it = SensorsIn.find("attitude");
   if (it!=SensorsIn.end())
@@ -132,19 +140,6 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
         pose (i, j) = attitude [i * 3 + j];
     attitudeSOUT.setConstant (pose);
     attitudeSOUT.setTime (t);
-  }
-
-  it = SensorsIn.find("motor-angles");
-  if (it!=SensorsIn.end())
-  {
-    const vector<double>& anglesIn = it->second.getValues();
-    dgRobotState_.resize (anglesIn.size () + 6);
-    for (unsigned i = 0; i < 6; ++i)
-      dgRobotState_ (i) = 0.;
-    for (unsigned i = 0; i < anglesIn.size(); ++i)
-      dgRobotState_ (i + 6) = anglesIn[i];
-    robotState_.setConstant(dgRobotState_);
-    robotState_.setTime(t);
   }
 
   it = SensorsIn.find("accelerometer_0");
@@ -167,7 +162,68 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     gyrometerSOUT_.setConstant (gyrometer_);
     gyrometerSOUT_.setTime (t);
   }
+}
 
+void SoTTalosDevice::setSensorsEncoders(map<string,dgsot::SensorValues> &SensorsIn, int t)
+{
+  map<string,dgsot::SensorValues>::iterator it;
+  
+  it = SensorsIn.find("motor-angles");
+  if (it!=SensorsIn.end())
+  {
+    const vector<double>& anglesIn = it->second.getValues();
+    dgRobotState_.resize (anglesIn.size () + 6);
+    motor_angles_.resize(anglesIn.size ());
+    for (unsigned i = 0; i < 6; ++i)
+      dgRobotState_ (i) = 0.;
+    for (unsigned i = 0; i < anglesIn.size(); ++i)
+      {
+	dgRobotState_ (i + 6) = anglesIn[i];
+	motor_angles_(i)= anglesIn[i];
+      }
+    robotState_.setConstant(dgRobotState_);
+    robotState_.setTime(t);
+    motor_anglesSOUT_.setConstant(motor_angles_);
+    motor_anglesSOUT_.setTime(t);
+  }
+
+  it = SensorsIn.find("joint-angles");
+  if (it!=SensorsIn.end())
+  {
+    const vector<double>& joint_anglesIn = it->second.getValues();
+    joint_angles_.resize (joint_anglesIn.size () );
+    for (unsigned i = 0; i < joint_anglesIn.size(); ++i)
+      joint_angles_ (i) = joint_anglesIn[i];
+    joint_anglesSOUT_.setConstant(joint_angles_);
+    joint_anglesSOUT_.setTime(t);
+  }
+
+}
+
+void SoTTalosDevice::setSensorsVelocities(map<string,dgsot::SensorValues> &SensorsIn, int t)
+{
+  map<string,dgsot::SensorValues>::iterator it;
+  
+  it = SensorsIn.find("velocities");
+  if (it!=SensorsIn.end())
+  {
+    const vector<double>& velocitiesIn = it->second.getValues();
+    dgRobotVelocity_.resize (velocitiesIn.size () + 6);
+    for (unsigned i = 0; i < 6; ++i)
+      dgRobotVelocity_ (i) = 0.;
+    for (unsigned i = 0; i < velocitiesIn.size(); ++i)
+      {
+	dgRobotVelocity_ (i + 6) = velocitiesIn[i];
+      }
+    robotVelocity_.setConstant(dgRobotVelocity_);
+    robotVelocity_.setTime(t);
+  }
+  
+}
+
+void SoTTalosDevice::setSensorsTorquesCurrents(map<string,dgsot::SensorValues> &SensorsIn, int t)
+{
+  map<string,dgsot::SensorValues>::iterator it;
   it = SensorsIn.find("torques");
   if (it!=SensorsIn.end())
   {
@@ -186,10 +242,14 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     currents_.resize(currents.size());
     for(std::size_t i = 0; i < currents.size(); ++i)
       currents_ (i) = currents[i];
-    currentSOUT_.setConstant(currents_);
-    currentSOUT_.setTime(t);
+    currentsSOUT_.setConstant(currents_);
+    currentsSOUT_.setTime(t);
   }
+}
 
+void SoTTalosDevice::setSensorsGains(map<string,dgsot::SensorValues> &SensorsIn, int t)
+{
+  map<string,dgsot::SensorValues>::iterator it;
   it = SensorsIn.find("p_gains");
   if (it!=SensorsIn.end())
   {
@@ -211,6 +271,22 @@ void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
     d_gainsSOUT_.setConstant(d_gains_);
     d_gainsSOUT_.setTime(t);
   }
+
+}
+
+
+void SoTTalosDevice::setSensors(map<string,dgsot::SensorValues> &SensorsIn)
+{
+  sotDEBUGIN(25) ;
+  map<string,dgsot::SensorValues>::iterator it;
+  int t = stateSOUT.getTime () + 1;
+
+  setSensorsForce(SensorsIn,t);
+  setSensorsIMU(SensorsIn,t);
+  setSensorsEncoders(SensorsIn,t);
+  setSensorsVelocities(SensorsIn,t);
+  setSensorsTorquesCurrents(SensorsIn,t);
+  setSensorsGains(SensorsIn,t);
 
   sotDEBUGOUT(25);
 }
