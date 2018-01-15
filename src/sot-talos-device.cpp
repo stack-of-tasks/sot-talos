@@ -85,6 +85,10 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   accelerometerSOUT_.setConstant (data);
   gyrometerSOUT_.setConstant (data);
   baseff_.resize(7);
+  dg::Vector dataForces(6); dataForces.setZero ();
+  for(int i=0;i<4;i++)
+    forcesSOUT[i]->setConstant(dataForces);
+  
   using namespace dynamicgraph::command;
   std::string docstring;
   /* Command increment. */
@@ -105,6 +109,7 @@ SoTTalosDevice::~SoTTalosDevice()
 
 void SoTTalosDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn, int t)
 {
+  sotDEBUGIN(15);
   map<string,dgsot::SensorValues>::iterator it;
   it = SensorsIn.find("forces");
   if (it!=SensorsIn.end())
@@ -114,17 +119,17 @@ void SoTTalosDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn,
     const vector<double>& forcesIn = it->second.getValues();
     for(int i=0;i<4;++i)
     {
-      std::cout << "Force sensor " << i << std::endl;
+      sotDEBUG(15) << "Force sensor " << i << std::endl;
       for(int j=0;j<6;++j)
 	{
 	  dgforces_(j) = forcesIn[i*6+j];
-	  std::cout << "Force value " << j << ":" << dgforces_(j) << std::endl;
+	  sotDEBUG(15) << "Force value " << j << ":" << dgforces_(j) << std::endl;
 	}
       forcesSOUT[i]->setConstant(dgforces_);
       forcesSOUT[i]->setTime (t);
     }
   }
-  else std::cout << "No forces in the map" << std::endl;
+  sotDEBUGIN(15);
 }
 
 void SoTTalosDevice::setSensorsIMU(map<string,dgsot::SensorValues> &SensorsIn, int t)
@@ -368,3 +373,30 @@ void SoTTalosDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
   ODEBUG5FULL("end");
   sotDEBUGOUT(25) ;
 }
+
+using namespace dynamicgraph::sot;
+
+namespace dynamicgraph { namespace sot {
+#ifdef WIN32
+const char * DebugTrace::DEBUG_FILENAME_DEFAULT = "c:/tmp/sot-core-traces.txt";
+#else	// WIN32
+const char * DebugTrace::DEBUG_FILENAME_DEFAULT = "/tmp/sot-core-traces.txt";
+#endif	// WIN32
+
+#ifdef VP_DEBUG
+# ifdef WIN32
+  std::ofstream debugfile("C:/tmp/sot-core-traces.txt",
+			  std::ios::trunc&std::ios::out);
+# else	// WIN32
+  std::ofstream debugfile("/tmp/sot-core-traces.txt",
+			  std::ios::trunc&std::ios::out);
+# endif	// WIN32
+#else // VP_DEBUG
+
+  std::ofstream debugfile;
+
+
+#endif // VP_DEBUG
+
+} /* namespace sot */} /* namespace dynamicgraph */
+
