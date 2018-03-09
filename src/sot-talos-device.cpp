@@ -23,7 +23,7 @@
 
 #define DBGFILE "/tmp/sot-talos-device.txt"
 
-#if 1
+#if 0
 #define RESETDEBUG5() { std::ofstream DebugFile;	\
     DebugFile.open(DBGFILE,std::ofstream::out);		\
     DebugFile.close();}
