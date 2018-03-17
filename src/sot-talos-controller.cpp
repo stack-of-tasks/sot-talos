@@ -20,6 +20,9 @@
 
 #include <boost/thread/thread.hpp>
 #include <boost/thread/condition.hpp>
+
+#include <ros/console.h>
+
 const std::string SoTTalosController::LOG_PYTHON="/tmp/TalosController_python.out";
 
 using namespace std;
@@ -133,8 +136,9 @@ runPython(std::ostream& file,
 	  dynamicgraph::Interpreter& interpreter)
 {
   file << ">>> " << command << std::endl;
-  std::string lerr(""),lout(""),lres("");
+  std::string lres(""),lout(""),lerr("");
   interpreter.runCommand(command,lres,lout,lerr);
+
   if (lres != "None")
     {
       if (lres=="<NULL>")
@@ -142,9 +146,14 @@ runPython(std::ostream& file,
 	  file << lout << std::endl;
 	  file << "------" << std::endl;
 	  file << lerr << std::endl;
+	  ROS_INFO(lout.c_str());
+	  ROS_ERROR(lerr.c_str());
 	}
       else
-	file << lres << std::endl;
+	{
+	  file << lres << std::endl;
+	  ROS_INFO(lres.c_str());
+	}
     }
 }
 

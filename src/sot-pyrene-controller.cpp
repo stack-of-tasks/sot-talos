@@ -30,6 +30,7 @@ void SoTPyreneController::startupPython()
 {
   SoTTalosController::startupPython();
   std::ofstream aof(LOG_PYTHON_PYRENE.c_str());
+  
   runPython
     (aof,
      "from dynamic_graph.sot.pyrene.prologue import robot",

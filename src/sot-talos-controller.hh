@@ -52,7 +52,8 @@ class SoTTalosController: public
   // Update output port with the control computed from the
   // dynamic graph.
   void updateRobotState(std::vector<double> &anglesIn);
-  
+
+  /// Run a python command 
   void runPython(std::ostream& file,
 		 const std::string& command,
 		 dynamicgraph::Interpreter& interpreter);
