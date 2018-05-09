@@ -71,7 +71,7 @@ void SoTTalosController::init()
   boost::unique_lock<boost::mutex> lock(mut);
   cond.wait(lock);
 
-  double ts = ros::param::param<double> ("/sot/dt", SoTTalosDevice::TIMESTEP_DEFAULT);
+  double ts = ros::param::param<double> ("/sot_controller/dt", SoTTalosDevice::TIMESTEP_DEFAULT);
   device_.timeStep(ts);
 }
 
