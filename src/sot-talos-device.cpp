@@ -53,7 +53,7 @@
 
 using namespace std;
 
-const double SoTTalosDevice::TIMESTEP_DEFAULT = 0.005;
+const double SoTTalosDevice::TIMESTEP_DEFAULT = 0.001;
 
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(SoTTalosDevice,"DeviceTalos");
 
