@@ -1,19 +1,64 @@
 variables:
-  GIT_SSL_NO_VERIFY: "true"
-  PROJECT: "sot-talos"
-  PROJECT_PATH: "pyrene-dev/${PROJECT}"
-  REGISTRY_IMAGES: "${CI_REGISTRY}/gsaurel/buildfarm"
-.build: &build
+  GIT_SUBMODULE_STRATEGY: "recursive"
+  GIT_DEPTH: "3"
+  NAMESPACE: stack-of-tasks
+  PROJECT: sot-talos
+  REGISTRY: eur0c.laas.fr:5000
+  IMAGE: "${REGISTRY}/${NAMESPACE}/${PROJECT}"
+  CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
+  CCACHE_DIR: "${CI_PROJECT_DIR}/ccache"
+
+cache:
+  paths:
+    - ccache
+
+
+.robotpkg-sot-talos: &robotpkg-sot-talos
+  variables:
+    ROBOTPKG: sot-talos
+    CATEGORY: wip
+  except:
+    - gh-pages
   before_script:
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "${SSH_DEPLOY_KEY}")
-    - echo "REPOSITORY.${PROJECT}=git ${CI_PROJECT_DIR}" >> /opt/openrobots/etc/robotpkg.conf
+    - mkdir -p ccache
   script:
-    - /checkout.sh
-    - cd /root/robotpkg/wip/${PROJECT} && make install
-build-14:
-    image: ${REGISTRY_IMAGES}/${PROJECT_PATH}:14.04
-    <<: *build
-build-16:
-    image: ${REGISTRY_IMAGES}/${PROJECT_PATH}:16.04
-    <<: *build
+    - cd /root/robotpkg/${CATEGORY}/${ROBOTPKG}
+    - git pull
+    - make checkout MASTER_REPOSITORY="dir ${CI_PROJECT_DIR}"
+    - make install
+    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)
+    - make check
+    - make doc
+    - mv doc/doxygen-html ${CI_PROJECT_DIR}
+
+
+robotpkg-sot-talos-18.04:
+  <<: *robotpkg-sot-talos
+  image: ${IMAGE}:18.04
+
+
+robotpkg-sot-talos-17.10:
+  <<: *robotpkg-sot-talos
+  image: ${IMAGE}:17.10
+
+
+robotpkg-sot-talos-16.04:
+  <<: *robotpkg-sot-talos
+  image: ${IMAGE}:16.04
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - doxygen-html/
+
+
+robotpkg-sot-talos-14.04:
+  <<: *robotpkg-sot-talos
+  image: ${IMAGE}:14.04
+
+
+robotpkg-sot-talos-dubnium:
+  <<: *robotpkg-sot-talos
+  image: ${IMAGE}:dubnium
+
+
+
