@@ -56,7 +56,7 @@ dgsot::Device
 
   void getControl(std::map<std::string, dgsot::ControlValues> &anglesOut);
 
-  void timeStep (double ts) { timestep_ = ts; }
+  void timeStep(double ts) { timestep_ =ts;}
 
 protected:
 
