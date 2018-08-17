@@ -51,6 +51,7 @@ ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge_msgs")
 ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge >= 3.0")
 
 ADD_OPTIONAL_DEPENDENCY("talos_data")
+ADD_OPTIONAL_DEPENDENCY("pyrene-motions")
 
 # Search for dependencies.
 # Boost
@@ -70,7 +71,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ADD_SUBDIRECTORY(src)
 
 IF(TALOS_DATA_FOUND)
-  FOREACH(py_filename kinetalos katana_holding)
+  FOREACH(py_filename kinetalos katana_holding )
     CONFIGURE_FILE(
       ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
       ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
@@ -81,6 +82,30 @@ IF(TALOS_DATA_FOUND)
       ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
       )
   ENDFOREACH(py_filename)
+
+  IF(PYRENE_MOTIONS_FOUND)
+    # Configure files using motions from pyrene-motions package
+    FOREACH(py_filename appli-test-simple-seq-play )
+      CONFIGURE_FILE(
+	${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
+	${PROJECT_BINARY_DIR}/tests/${py_filename}.py
+	)
+      INSTALL(FILES
+	${PROJECT_BINARY_DIR}/tests/${py_filename}.py
+	DESTINATION
+	${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
+	)    
+    ENDFOREACH(py_filename)
+    
+    # Install python files starting the application
+    FOREACH(py_filename test-simple-seq-play )
+      INSTALL(FILES
+	${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
+	DESTINATION
+	${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
+	)    
+    ENDFOREACH(py_filename)
+  ENDIF(PYRENE_MOTION_FOUND)
 ENDIF(TALOS_DATA_FOUND)
 
 SETUP_PROJECT_FINALIZE()
