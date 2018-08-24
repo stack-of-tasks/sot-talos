@@ -101,6 +101,11 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   addCommand("increment",
              makeCommandVoid1((Device&)*this,
                               &Device::increment, docstring));
+
+  addCommand("getTimeStep",
+             makeDirectGetter (*this, &this->timestep_,
+                               docDirectGetter ("Time step", "double")));
+
   sotDEBUGOUT(25);
 }
 
