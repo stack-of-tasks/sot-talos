@@ -23,16 +23,17 @@ from dynamic_graph.sot.pyrene.robot import Robot
 # 1. it does not provide the increment command
 # 2. it forwards the robot control to the sot-abstract
 #    controller.
-DeviceTalos = PyEntityFactoryClass('DeviceTalos')
+def makeRobot ():
+    DeviceTalos = PyEntityFactoryClass('DeviceTalos')
 
-# Create the robot using the device.
-robot = Robot(name = 'robot', device = DeviceTalos('PYRENE'))
+    # Create the robot using the device.
+    robot = Robot(name = 'robot', device = DeviceTalos('PYRENE'))
 
-robot.dynamic.com.recompute (0)
-_com = robot.dynamic.com.value
-robot.device.zmp.value = (_com[0], _com[1], 0.)
+    robot.dynamic.com.recompute (0)
+    _com = robot.dynamic.com.value
+    robot.device.zmp.value = (_com[0], _com[1], 0.)
 
-__all__ = ["robot"]
+    return robot
 
 ####################################
 #        --- IMPORTANT ---         #

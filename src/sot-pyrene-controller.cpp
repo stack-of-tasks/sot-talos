@@ -33,7 +33,11 @@ void SoTPyreneController::startupPython()
   
   runPython
     (aof,
-     "from dynamic_graph.sot.pyrene.prologue import robot",
+     "from dynamic_graph.sot.pyrene.prologue import makeRobot",
+     *interpreter_);
+  runPython
+    (aof,
+     "robot = makeRobot ()",
      *interpreter_);
   aof.close();
 }
