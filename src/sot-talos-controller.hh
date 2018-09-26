@@ -65,7 +65,7 @@ class SoTTalosController: public
     
   void init();
 
-  SoTTalosDevice device_;
+  SoTTalosDevice* device_;
 };
 
 #endif /* _SOT_TalosController_H_ */

@@ -28,13 +28,13 @@ const std::string SoTTalosController::LOG_PYTHON="/tmp/TalosController_python.ou
 using namespace std;
 
 SoTTalosController::SoTTalosController(std::string RobotName):
-  device_(RobotName)
+  device_(new SoTTalosDevice(RobotName))
 {
   init();
 }
 
 SoTTalosController::SoTTalosController(const char robotName[]):
-  device_(robotName)
+  device_(new SoTTalosDevice(robotName))
 {
   init();
 }
@@ -52,30 +52,31 @@ void SoTTalosController::init()
 	       << __LINE__ << " )" << std::endl;
 
   double ts = ros::param::param<double> ("/sot_controller/dt", SoTTalosDevice::TIMESTEP_DEFAULT);
-  device_.timeStep(ts);
+  device_->timeStep(ts);
 }
 
 SoTTalosController::~SoTTalosController()
 {
+  // device_ will be deleted by dynamicgraph::PoolStorage::destroy()
 }
 
 void SoTTalosController::
 setupSetSensors(map<string,dgsot::SensorValues> &SensorsIn)
 {
-  device_.setupSetSensors(SensorsIn);
+  device_->setupSetSensors(SensorsIn);
 }
 
 
 void SoTTalosController::
 nominalSetSensors(map<string,dgsot::SensorValues> &SensorsIn)
 {
-  device_.nominalSetSensors(SensorsIn);
+  device_->nominalSetSensors(SensorsIn);
 }
 
 void SoTTalosController::
 cleanupSetSensors(map<string, dgsot::SensorValues> &SensorsIn)
 {
-  device_.cleanupSetSensors(SensorsIn);
+  device_->cleanupSetSensors(SensorsIn);
 }
 
 
@@ -85,7 +86,7 @@ getControl(map<string,dgsot::ControlValues> &controlOut)
   try 
     {
       sotDEBUG(25) << __FILE__ << __FUNCTION__ << "(#" << __LINE__ << ")" << endl;
-      device_.getControl(controlOut);
+      device_->getControl(controlOut);
       sotDEBUG(25) << __FILE__ << __FUNCTION__ << "(#" << __LINE__ << ")" << endl;
     }
   catch ( dynamicgraph::sot::ExceptionAbstract & err)
@@ -103,13 +104,13 @@ getControl(map<string,dgsot::ControlValues> &controlOut)
 void SoTTalosController::
 setNoIntegration(void)
 {
-  device_.setNoIntegration();
+  device_->setNoIntegration();
 }
 
 void SoTTalosController::
 setSecondOrderIntegration(void)
 {
-  device_.setSecondOrderIntegration();
+  device_->setSecondOrderIntegration();
 }
 
 void SoTTalosController::
