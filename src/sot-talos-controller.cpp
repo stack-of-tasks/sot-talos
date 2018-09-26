@@ -27,27 +27,6 @@ const std::string SoTTalosController::LOG_PYTHON="/tmp/TalosController_python.ou
 
 using namespace std;
 
-boost::condition_variable cond;
-boost::mutex mut;
-bool data_ready;
-
-
-void workThread(SoTTalosController *aSoTTalos)
-{
-  
-  dynamicgraph::Interpreter aLocalInterpreter(dynamicgraph::rosInit(false,true));
-
-  aSoTTalos->interpreter_ = 
-    boost::make_shared<dynamicgraph::Interpreter>(aLocalInterpreter);
-  std::cout << "Going through the thread." << std::endl;
-  {
-    boost::lock_guard<boost::mutex> lock(mut);
-    data_ready=true;
-  }
-  cond.notify_all();
-  ros::waitForShutdown();
-}
-
 SoTTalosController::SoTTalosController(std::string RobotName):
   device_(RobotName)
 {
@@ -63,13 +42,14 @@ SoTTalosController::SoTTalosController(const char robotName[]):
 void SoTTalosController::init()
 {
   std::cout << "Going through SoTTalosController." << std::endl;
-  boost::thread thr(workThread,this);
+
+  ros::NodeHandle &nh = dynamicgraph::rosInit(false,true);
+  interpreter_ = boost::shared_ptr<dynamicgraph::Interpreter>(
+      new dynamicgraph::Interpreter (nh));
+
   sotDEBUG(25) << __FILE__ << ":" 
 	       << __FUNCTION__ <<"(#" 
 	       << __LINE__ << " )" << std::endl;
-
-  boost::unique_lock<boost::mutex> lock(mut);
-  cond.wait(lock);
 
   double ts = ros::param::param<double> ("/sot_controller/dt", SoTTalosDevice::TIMESTEP_DEFAULT);
   device_.timeStep(ts);

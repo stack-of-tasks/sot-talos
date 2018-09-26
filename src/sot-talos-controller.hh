@@ -48,6 +48,9 @@ class SoTTalosController: public
   /// Embedded python interpreter accessible via Corba/ros
   boost::shared_ptr<dynamicgraph::Interpreter> interpreter_;
 
+  boost::shared_ptr<ros::NodeHandle> nh_;
+  boost::shared_ptr<ros::AsyncSpinner> spinner_;
+
  protected:
   // Update output port with the control computed from the
   // dynamic graph.
