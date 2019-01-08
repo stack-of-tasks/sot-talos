@@ -40,7 +40,7 @@ SETUP_PROJECT()
 
 # Search for dependencies.
 
-ADD_REQUIRED_DEPENDENCY("pinocchio")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
@@ -94,16 +94,16 @@ IF(TALOS_DATA_FOUND)
 	${PROJECT_BINARY_DIR}/tests/${py_filename}.py
 	DESTINATION
 	${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
-	)    
+	)
     ENDFOREACH(py_filename)
-    
+
     # Install python files starting the application
     FOREACH(py_filename test-simple-seq-play )
       INSTALL(FILES
 	${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
 	DESTINATION
 	${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
-	)    
+	)
     ENDFOREACH(py_filename)
   ENDIF(PYRENE_MOTIONS_FOUND)
 ENDIF(TALOS_DATA_FOUND)
