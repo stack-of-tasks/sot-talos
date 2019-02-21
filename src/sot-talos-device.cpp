@@ -59,7 +59,6 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(SoTTalosDevice,"DeviceTalos");
 
 SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   dgsot::Device(RobotName),
-  timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
   baseff_ (),
   accelerometerSOUT_("Device(" + RobotName + ")::output(vector)::accelerometer"),
@@ -74,7 +73,9 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   gyrometer_ (3)
 {
   RESETDEBUG5();
+  timestep_=TIMESTEP_DEFAULT;
   sotDEBUGIN(25) ;
+  
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
   signalRegistration (accelerometerSOUT_ << gyrometerSOUT_
                       << currentsSOUT_ 
