@@ -104,7 +104,7 @@ class Talos(AbstractHumanoidRobot):
 
         # Initialize device
         self.device = device
-
+        self.timeStep = self.device.getTimeStep()
         self.device.resize(self.dynamic.getDimension())
         # TODO For position limit, we remove the first value to get
         # a vector of the good size because SoT use euler angles and not
