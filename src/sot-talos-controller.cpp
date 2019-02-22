@@ -43,7 +43,9 @@ void SoTTalosController::init()
 {
   std::cout << "Going through SoTTalosController." << std::endl;
 
-  ros::NodeHandle &nh = dynamicgraph::rosInit(false,true);
+  // rosInit is called here only to initialize ros.
+  // No spinner is initialized.
+  ros::NodeHandle &nh = dynamicgraph::rosInit(false,false);
   interpreter_ = boost::shared_ptr<dynamicgraph::Interpreter>(
       new dynamicgraph::Interpreter (nh));
 

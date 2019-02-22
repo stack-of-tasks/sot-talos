@@ -60,9 +60,6 @@ dgsot::Device
 
 protected:
 
-  /// \brief Current integration step.
-  double timestep_;
-  
   /// \brief Previous robot configuration.
   dg::Vector previousState_;
   

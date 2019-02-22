@@ -80,7 +80,7 @@ class Talos(AbstractHumanoidRobot):
 
         from rospkg import RosPack
         rospack = RosPack()
-        urdfPath = rospack.get_path('talos_data')+"/urdf/talos_reduced_v2.urdf"
+        urdfPath = rospack.get_path('talos_data')+"/urdf/talos_reduced.urdf"
         urdfDir = [rospack.get_path('talos_data')+"/../"]
 
         # Create a wrapper to access the dynamic model provided through an urdf file.
@@ -104,7 +104,7 @@ class Talos(AbstractHumanoidRobot):
 
         # Initialize device
         self.device = device
-
+        self.timeStep = self.device.getTimeStep()
         self.device.resize(self.dynamic.getDimension())
         # TODO For position limit, we remove the first value to get
         # a vector of the good size because SoT use euler angles and not

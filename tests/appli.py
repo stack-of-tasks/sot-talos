@@ -34,6 +34,13 @@ sot = SOT('sot')
 sot.setSize(robot.dynamic.getDimension())
 plug(sot.control,robot.device.control)
 
+from dynamic_graph.ros import RosPublish
+ros_publish_state = RosPublish ("ros_publish_state")
+ros_publish_state.add ("vector", "state", "/sot_control/state")
+from dynamic_graph import plug
+plug (robot.device.state, ros_publish_state.state)
+robot.device.after.addDownsampledSignal ("ros_publish_state.trigger", 100)
+
 #target = (0.5,-0.2,1.0)
 
 #addRobotViewer(robot, small=False)

@@ -59,7 +59,6 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(SoTTalosDevice,"DeviceTalos");
 
 SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   dgsot::Device(RobotName),
-  timestep_(TIMESTEP_DEFAULT),
   previousState_ (),
   baseff_ (),
   accelerometerSOUT_("Device(" + RobotName + ")::output(vector)::accelerometer"),
@@ -74,7 +73,9 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
   gyrometer_ (3)
 {
   RESETDEBUG5();
+  timestep_=TIMESTEP_DEFAULT;
   sotDEBUGIN(25) ;
+  
   for( int i=0;i<4;++i ) { withForceSignals[i] = true; }
   signalRegistration (accelerometerSOUT_ << gyrometerSOUT_
                       << currentsSOUT_ 
@@ -102,10 +103,6 @@ SoTTalosDevice::SoTTalosDevice(std::string RobotName):
              makeCommandVoid1((Device&)*this,
                               &Device::increment, docstring));
 
-  addCommand("getTimeStep",
-             makeDirectGetter (*this, &this->timestep_,
-                               docDirectGetter ("Time step", "double")));
-
   sotDEBUGOUT(25);
 }
 
@@ -114,6 +111,7 @@ SoTTalosDevice::~SoTTalosDevice()
 
 void SoTTalosDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn, int t)
 {
+  int map_sot_2_urdf[4] = { 2, 0, 3, 1};
   sotDEBUGIN(15);
   map<string,dgsot::SensorValues>::iterator it;
   it = SensorsIn.find("forces");
@@ -125,9 +123,10 @@ void SoTTalosDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn,
     for(int i=0;i<4;++i)
     {
       sotDEBUG(15) << "Force sensor " << i << std::endl;
+      int idx_sensor = map_sot_2_urdf[i];
       for(int j=0;j<6;++j)
 	{
-	  dgforces_(j) = forcesIn[i*6+j];
+	  dgforces_(j) = forcesIn[idx_sensor*6+j];
 	  sotDEBUG(15) << "Force value " << j << ":" << dgforces_(j) << std::endl;
 	}
       forcesSOUT[i]->setConstant(dgforces_);
