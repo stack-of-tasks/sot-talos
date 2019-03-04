@@ -1,17 +1,5 @@
 # Copyright 2016, Thomas Moulard, Olivier Stasse, JRL, CNRS/AIST
 #
-# This file is part of sot-talos.
-# sot-talos is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# sot-talos is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# sot-talos. If not, see <http://www.gnu.org/licenses/>.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
@@ -19,12 +7,12 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
-INCLUDE(cmake/cpack.cmake)
 INCLUDE(cmake/ros.cmake)
 
+SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-talos)
 SET(PROJECT_DESCRIPTION "dynamic-graph package for Talos robot")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/sot-talos")
+SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
@@ -87,23 +75,23 @@ IF(TALOS_DATA_FOUND)
     # Configure files using motions from pyrene-motions package
     FOREACH(py_filename appli-test-simple-seq-play )
       CONFIGURE_FILE(
-	${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
-	${PROJECT_BINARY_DIR}/tests/${py_filename}.py
-	)
+        ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
+        ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
+        )
       INSTALL(FILES
-	${PROJECT_BINARY_DIR}/tests/${py_filename}.py
-	DESTINATION
-	${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
-	)
+        ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
+        DESTINATION
+        ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
+        )
     ENDFOREACH(py_filename)
 
     # Install python files starting the application
     FOREACH(py_filename test-simple-seq-play )
       INSTALL(FILES
-	${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
-	DESTINATION
-	${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
-	)
+        ${PROJECT_SOURCE_DIR}/tests/${py_filename}.py
+        DESTINATION
+        ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/tests
+        )
     ENDFOREACH(py_filename)
   ENDIF(PYRENE_MOTIONS_FOUND)
 
@@ -117,4 +105,3 @@ IF(TALOS_DATA_FOUND)
 ENDIF(TALOS_DATA_FOUND)
 
 SETUP_PROJECT_FINALIZE()
-SETUP_PROJECT_CPACK()
