@@ -87,7 +87,8 @@ class Talos(AbstractHumanoidRobot):
         from pinocchio.robot_wrapper import RobotWrapper
         import pinocchio as se3
         from dynamic_graph.sot.dynamics_pinocchio import fromSotToPinocchio
-        pinocchioRobot = RobotWrapper(urdfPath, urdfDir, se3.JointModelFreeFlyer())
+        pinocchioRobot = RobotWrapper()
+        pinocchioRobot.initFromURDF(urdfPath, urdfDir, se3.JointModelFreeFlyer())
         self.pinocchioModel = pinocchioRobot.model
         self.pinocchioData = pinocchioRobot.data
 
