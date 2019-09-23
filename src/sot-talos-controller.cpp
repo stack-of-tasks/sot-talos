@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016,
  *
  * Rohan Budhiraja
@@ -7,7 +7,7 @@
  * LAAS, CNRS
  *
  * This file is part of TALOSController.
- * TALOSController is a free software, 
+ * TALOSController is a free software,
  *
  */
 
@@ -49,8 +49,8 @@ void SoTTalosController::init()
   interpreter_ = boost::shared_ptr<dynamicgraph::Interpreter>(
       new dynamicgraph::Interpreter (nh));
 
-  sotDEBUG(25) << __FILE__ << ":" 
-	       << __FUNCTION__ <<"(#" 
+  sotDEBUG(25) << __FILE__ << ":"
+	       << __FUNCTION__ <<"(#"
 	       << __LINE__ << " )" << std::endl;
 
   double ts = ros::param::param<double> ("/sot_controller/dt", SoTTalosDevice::TIMESTEP_DEFAULT);
@@ -85,7 +85,7 @@ cleanupSetSensors(map<string, dgsot::SensorValues> &SensorsIn)
 void SoTTalosController::
 getControl(map<string,dgsot::ControlValues> &controlOut)
 {
-  try 
+  try
     {
       sotDEBUG(25) << __FILE__ << __FUNCTION__ << "(#" << __LINE__ << ")" << endl;
       device_->getControl(controlOut);
@@ -94,10 +94,10 @@ getControl(map<string,dgsot::ControlValues> &controlOut)
   catch ( dynamicgraph::sot::ExceptionAbstract & err)
     {
 
-      std::cout << __FILE__ << " " 
-		<< __FUNCTION__ << " (" 
-		<< __LINE__ << ") " 
-		<< err.getStringMessage() 
+      std::cout << __FILE__ << " "
+		<< __FUNCTION__ << " ("
+		<< __LINE__ << ") "
+		<< err.getStringMessage()
 		<<  endl;
       throw err;
     }
@@ -147,7 +147,7 @@ startupPython()
 {
   std::ofstream aof(LOG_PYTHON.c_str());
   runPython (aof, "import sys, os", *interpreter_);
-  runPython (aof, "pythonpath = os.environ['PYTHONPATH']", *interpreter_);
+  runPython (aof, "pythonpath = os.environ.get('PYTHONPATH', '')", *interpreter_);
   runPython (aof, "path = []", *interpreter_);
   runPython (aof,
 	     "for p in pythonpath.split(':'):\n"
@@ -163,4 +163,3 @@ startupPython()
   dynamicgraph::rosInit (true);
   aof.close();
 }
-
