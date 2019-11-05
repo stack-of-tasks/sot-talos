@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016, Olivier STASSE, LAAS-CNRS
-#
-# This file is part of TALOSController.
-# TALOSController is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# TALOSController is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# TALOSController. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
 
@@ -97,7 +84,7 @@ class Talos(AbstractHumanoidRobot):
         self.OperationalPoints.append('waist')
         self.OperationalPoints.append('chest')
 
-        # Create rigid body dynamics model and data (pinocchio) 
+        # Create rigid body dynamics model and data (pinocchio)
         self.dynamic = DynamicPinocchio(self.name + "_dynamic")
         self.dynamic.setModel(self.pinocchioModel)
         self.dynamic.setData(self.pinocchioData)
@@ -129,7 +116,7 @@ class Talos(AbstractHumanoidRobot):
         self.AdditionalFrames.append(
             ("rightFootForceSensor",
              self.forceSensorInRightAnkle, self.OperationalPointsMap["right-ankle"]))
-        
+
         self.dimension = self.dynamic.getDimension()
         self.plugVelocityFromDevice = True
         self.dynamic.displayModel()
@@ -143,7 +130,7 @@ class Talos(AbstractHumanoidRobot):
         else:
             self.dynamic.velocity.value = self.dimension*(0.,)
 
-        # Initialize acceleration derivator if chosen            
+        # Initialize acceleration derivator if chosen
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
                 Derivator_of_Vector('accelerationDerivator')
