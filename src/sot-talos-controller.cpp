@@ -11,12 +11,12 @@
  *
  */
 
+#include "sot-talos-controller.hh"
+
 #include <sot/core/debug.hh>
 #include <sot/core/exception-abstract.hh>
 #include <dynamic_graph_bridge/ros_init.hh>
 #include <dynamic_graph_bridge/ros_interpreter.hh>
-
-#include "sot-talos-controller.hh"
 
 #include <boost/thread/thread.hpp>
 #include <boost/thread/condition.hpp>
