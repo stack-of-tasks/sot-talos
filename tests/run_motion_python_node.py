@@ -21,9 +21,11 @@
 # System imports
 import sys
 import time
+
 # ROS imports
 import rospy
-from actionlib import SimpleActionClient, GoalStatus
+from actionlib import GoalStatus, SimpleActionClient
+
 from play_motion_msgs.msg import PlayMotionAction, PlayMotionGoal
 
 
@@ -68,6 +70,7 @@ def wait_for_valid_time(timeout):
 
 def get_status_string(status_code):
     return GoalStatus.to_string(status_code)
+
 
 if __name__ == '__main__':
     rospy.init_node('run_motion_python')

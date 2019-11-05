@@ -1,29 +1,57 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016, Olivier Stasse, CNRS
 
-
 from dynamic_graph.sot.talos import Talos
-import numpy as np
 
-class Robot (Talos):
+
+class Robot(Talos):
     """
     This class instantiates LAAS TALOS Robot
     """
 
+    halfSitting = (
+        0.0,
+        0.0,
+        1.018213,
+        0.00,
+        0.0,
+        0.0,  # Free flyer
+        0.0,
+        0.0,
+        -0.411354,
+        0.859395,
+        -0.448041,
+        -0.001708,  # Left Leg
+        0.0,
+        0.0,
+        -0.411354,
+        0.859395,
+        -0.448041,
+        -0.001708,  # Right Leg
+        0.0,
+        0.006761,  # Chest
+        0.25847,
+        0.173046,
+        -0.0002,
+        -0.525366,
+        0.0,
+        -0.0,
+        0.1,
+        -0.005,  # Left Arm
+        -0.25847,
+        -0.173046,
+        0.0002,
+        -0.525366,
+        0.0,
+        0.0,
+        0.1,
+        -0.005,  # Right Arm
+        0.,
+        0.  # Head
+    )
 
-    halfSitting = (0.0, 0.0,  1.018213,  0.00  ,  0.0, 0.0,                         #Free flyer
-                   0.0,  0.0, -0.411354,  0.859395, -0.448041, -0.001708, #Left Leg
-                   0.0,  0.0, -0.411354,  0.859395, -0.448041, -0.001708, #Right Leg
-                   0.0 ,  0.006761,                                                 #Chest
-                   0.25847 ,  0.173046, -0.0002, -0.525366, 0.0, -0.0,  0.1, -0.005,        #Left Arm
-                  -0.25847 , -0.173046, 0.0002  , -0.525366, 0.0,  0.0,  0.1,-0.005,      #Right Arm
-                   0.,  0.                                                          #Head
-               )
-
-    def __init__(self, name,
-                 device = None,
-                 tracer = None):
-        Talos.__init__(self,name,self.halfSitting,device,tracer)
+    def __init__(self, name, device=None, tracer=None):
+        Talos.__init__(self, name, self.halfSitting, device, tracer)
         """
         TODO:Confirm these values
         # Define camera positions w.r.t gaze.
@@ -79,5 +107,6 @@ class Robot (Talos):
             ("cameraTopRight",
              matrixToTuple(cameraTopRightPosition), "gaze"))
         """
+
 
 __all__ = ["Robot"]
