@@ -6,7 +6,7 @@
  * LAAS, CNRS
  *
  * This file is part of TALOSController.
- * TALOSController is a free software, 
+ * TALOSController is a free software,
  *
  */
 
@@ -17,43 +17,26 @@
 
 #include "sot-pyrene-controller.hh"
 
-const std::string SoTPyreneController::LOG_PYTHON_PYRENE="/tmp/PyreneController_python.out";
+const std::string SoTPyreneController::LOG_PYTHON_PYRENE = "/tmp/PyreneController_python.out";
 
-SoTPyreneController::SoTPyreneController():
-  SoTTalosController(ROBOTNAME)
-{
+SoTPyreneController::SoTPyreneController() : SoTTalosController(ROBOTNAME) {
   startupPython();
-  interpreter_->startRosService ();
+  interpreter_->startRosService();
 }
 
-void SoTPyreneController::startupPython()
-{
+void SoTPyreneController::startupPython() {
   SoTTalosController::startupPython();
   std::ofstream aof(LOG_PYTHON_PYRENE.c_str());
-  
-  runPython
-    (aof,
-     "from dynamic_graph.sot.pyrene.prologue import makeRobot",
-     *interpreter_);
-  runPython
-    (aof,
-     "robot = makeRobot ()",
-     *interpreter_);
+
+  runPython(aof, "from dynamic_graph.sot.pyrene.prologue import makeRobot", *interpreter_);
+  runPython(aof, "robot = makeRobot ()", *interpreter_);
   aof.close();
 }
 
-extern "C" 
-{
-  dgsot::AbstractSotExternalInterface * createSotExternalInterface()
-  {
-    return new SoTPyreneController;
-  }
+extern "C" {
+dgsot::AbstractSotExternalInterface *createSotExternalInterface() { return new SoTPyreneController; }
 }
 
-extern "C"
-{
-  void destroySotExternalInterface(dgsot::AbstractSotExternalInterface *p)
-  {
-    delete p;
-  }
+extern "C" {
+void destroySotExternalInterface(dgsot::AbstractSotExternalInterface *p) { delete p; }
 }
