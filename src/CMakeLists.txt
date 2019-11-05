@@ -1,9 +1,5 @@
 # Copyright 2016, R. Budhiraja, Olivier Stasse, CNRS
 
-INCLUDE(../cmake/python.cmake)
-FINDPYTHON()
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
 FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
   ADD_LIBRARY(${NAME} SHARED ${SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES
@@ -109,4 +105,3 @@ MACRO(build_talos_controller)
 ENDMACRO()
 
 build_talos_controller()
-
