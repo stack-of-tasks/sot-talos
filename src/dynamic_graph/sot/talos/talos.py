@@ -80,7 +80,7 @@ class Talos(AbstractHumanoidRobot):
 
         from rospkg import RosPack
         rospack = RosPack()
-        urdfPath = rospack.get_path('talos_data')+"/urdf/talos_reduced.urdf"
+        urdfPath = rospack.get_path('talos_data')+"/urdf/talos_reduced_v2.urdf"
         urdfDir = [rospack.get_path('talos_data')+"/../"]
 
         # Create a wrapper to access the dynamic model provided through an urdf file.
