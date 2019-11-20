@@ -3,16 +3,35 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/lapack.cmake)
-INCLUDE(cmake/ros.cmake)
-
 SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-talos)
 SET(PROJECT_DESCRIPTION "dynamic-graph package for Talos robot")
 SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
+
+# Export CMake Target
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+
+# Disable -Werror on Unix for now.
+SET(CXX_DISABLE_WERROR True)
+
+INCLUDE(cmake/base.cmake)
+
+# Specify the project.
+cmake_policy(SET CMP0048 NEW)
+PROJECT(${PROJECT_NAME}
+  LANGUAGES
+  CXX
+  VERSION
+  ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
+  )
+
+find_package (Boost REQUIRED
+  python filesystem system thread program_options unit_test_framework)
+find_package (Eigen3 REQUIRED NO_MODULE)
+
+INCLUDE(cmake/lapack.cmake)
+INCLUDE(cmake/ros.cmake)
+
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
@@ -24,13 +43,12 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
   plugindir
   )
 
-SETUP_PROJECT()
 
 # Search for dependencies.
 
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
+ADD_PROJECT_DEPENDENCY(dynamic-graph 3.0.0 REQUIRED)
 ADD_REQUIRED_DEPENDENCY("sot-core >= 4.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-dynamic-pinocchio >= 3.1")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
@@ -43,9 +61,6 @@ ADD_OPTIONAL_DEPENDENCY("pyrene-motions")
 
 # Search for dependencies.
 # Boost
-SET(BOOST_COMPONENTS filesystem system thread)
-SEARCH_FOR_BOOST()
-SEARCH_FOR_EIGEN()
 
 # Handle rpath necessary to handle ROS multiplace packages
 # libraries inclusion

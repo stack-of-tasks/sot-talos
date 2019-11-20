@@ -23,9 +23,9 @@ FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
     PREFIX ""
     SOVERSION ${PROJECT_VERSION})
 
-  PKG_CONFIG_USE_DEPENDENCY(${NAME} dynamic-graph)
-  PKG_CONFIG_USE_DEPENDENCY(${NAME} sot-core)
-  PKG_CONFIG_USE_DEPENDENCY(${NAME} eigen3)
+  TARGET_LINK_LIBRARIES(${NAME} dynamic-graph::dynamic-graph)
+  TARGET_LINK_LIBRARIES(${NAME} sot-core::sot-core)
+  TARGET_LINK_LIBRARIES(${NAME} eigen3)
   PKG_CONFIG_USE_DEPENDENCY(${NAME} pinocchio)
 
   INSTALL(TARGETS ${NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/plugin)
@@ -67,7 +67,7 @@ MACRO(build_talos_device)
   )
 
   # Link the dynamic library containing the SoT with its dependencies.
-  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic-graph")
+  PKG_PROJECT_DEPENDENCY(${DEVICE_NAME} "dynamic-graph")
   PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic-graph-python")
   PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "sot-core")
   PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "pinocchio")
