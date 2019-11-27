@@ -22,7 +22,9 @@ from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import AbstractHumanoid
 from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
 from dynamic_graph import plug
 
-import pinocchio as se3
+from pinocchio.robot_wrapper import RobotWrapper
+from pinocchio import buildModelFromXML, buildReducedModel, neutral, \
+    JointModelFreeFlyer
 from rospkg import RosPack
 
 # Internal helper tool.
@@ -46,6 +48,8 @@ class Talos(AbstractHumanoidRobot):
                                (0.,1.,0.,0.),
                                (0.,0.,1.,-0.107),
                                (0.,0.,0.,1.))
+    defaultFilename = "talos_reduced_v2.urdf"
+
     """
     TODO: Confirm the position and existence of these sensors
     accelerometerPosition = np.matrix ((
@@ -69,7 +73,8 @@ class Talos(AbstractHumanoidRobot):
         res = config[0:27] + 7*(0.,) + config[27:34]+ 7*(0.,)+config[34:]
         return res
 
-    def __init__(self, name, initialConfig, device = None, tracer = None):
+    def __init__(self, name, initialConfig, device = None, tracer = None,
+                 fromRosParam = False):
         self.OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
                                      'right-wrist' : 'arm_right_7_joint',
                                      'left-ankle'  : 'leg_left_6_joint',
@@ -78,17 +83,44 @@ class Talos(AbstractHumanoidRobot):
                                      'waist'       : 'root_joint',
                                      'chest'       : 'torso_2_joint'}
 
-        from rospkg import RosPack
-        rospack = RosPack()
-        urdfPath = rospack.get_path('talos_data')+"/urdf/talos_reduced_v2.urdf"
-        urdfDir = [rospack.get_path('talos_data')+"/../"]
+        if fromRosParam:
+            print ("Using ROS parameter \"/robot_description\"")
+            rosParamName = "/robot_description"
+            import rospy
+            if rosParamName not in rospy.get_param_names ():
+                raise RuntimeError ('"' + rosParamName +
+                                    '" is not a ROS parameter.')
+            s = rospy.get_param (rosParamName)
+            model = buildModelFromXML (s, JointModelFreeFlyer())
 
-        # Create a wrapper to access the dynamic model provided through an urdf file.
-        from pinocchio.robot_wrapper import RobotWrapper
-        import pinocchio as se3
-        from dynamic_graph.sot.dynamics_pinocchio import fromSotToPinocchio
-        pinocchioRobot = RobotWrapper()
-        pinocchioRobot.initFromURDF(urdfPath, urdfDir, se3.JointModelFreeFlyer())
+            # get mimic joints
+            mimicJoints = list ()
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring (s)
+            for e in root.iter ('joint'):
+                if e.attrib.has_key ('name'):
+                    name = e.attrib ['name']
+                    for c in e._children:
+                        if hasattr (c, 'tag') and c.tag == 'mimic':
+                            mimicJoints.append (name)
+            jointIds = list ()
+            for j in mimicJoints:
+                jointIds.append (model.getJointId (j))
+            q = neutral (model)
+            reducedModel = buildReducedModel (model, jointIds, q)
+            pinocchioRobot = RobotWrapper (model = reducedModel)
+        else:
+            # Create a wrapper to access the dynamic model provided
+            # through an urdf file.
+            pinocchioRobot = RobotWrapper()
+            from rospkg import RosPack
+            rospack = RosPack()
+            urdfPath = rospack.get_path('talos_data')+ "/urdf/" + \
+                       self.defaultFilename
+            urdfDir = [rospack.get_path('talos_data')+"/../"]
+            pinocchioRobot.initFromURDF(urdfPath, urdfDir,
+                                        JointModelFreeFlyer())
+
         self.pinocchioModel = pinocchioRobot.model
         self.pinocchioData = pinocchioRobot.data
 

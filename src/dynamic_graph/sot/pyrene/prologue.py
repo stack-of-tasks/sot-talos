@@ -27,7 +27,8 @@ def makeRobot ():
     DeviceTalos = PyEntityFactoryClass('DeviceTalos')
 
     # Create the robot using the device.
-    robot = Robot(name = 'robot', device = DeviceTalos('PYRENE'))
+    robot = Robot(name = 'robot', device = DeviceTalos('PYRENE'),
+                  fromRosParam = True)
 
     robot.dynamic.com.recompute (0)
     _com = robot.dynamic.com.value
