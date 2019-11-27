@@ -17,6 +17,11 @@ print("Prologue Pyrene TALOS Robot")
 
 from dynamic_graph.entity import PyEntityFactoryClass
 from dynamic_graph.sot.pyrene.robot import Robot
+# sys.argv is not defined when running the remove interpreter, but it is
+# required by rospy
+import sys
+if not hasattr (sys, 'argv'):
+    sys.argv = "dynamic_graph"
 
 # Create the device.
 # This entity behaves exactly like robotsimu except:
