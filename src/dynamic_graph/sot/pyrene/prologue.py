@@ -21,7 +21,7 @@ from dynamic_graph.sot.pyrene.robot import Robot
 # required by rospy
 import sys
 if not hasattr (sys, 'argv'):
-    sys.argv = "dynamic_graph"
+    sys.argv = ["dynamic_graph",]
 
 # Create the device.
 # This entity behaves exactly like robotsimu except:
