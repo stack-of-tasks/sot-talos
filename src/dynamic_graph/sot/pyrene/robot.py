@@ -50,7 +50,7 @@ class Robot(Talos):
         0.  # Head
     )
 
-    def __init__(self, name, device=None, tracer=None):
+    def __init__(self, name, device=None, tracer=None, fromRosParam=None):
         Talos.__init__(self, name, self.halfSitting, device, tracer)
         """
         TODO:Confirm these values

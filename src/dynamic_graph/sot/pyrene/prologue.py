@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 
+# sys.argv is not defined when running the remove interpreter, but it is
+# required by rospy
+import sys
+
 from dynamic_graph.entity import PyEntityFactoryClass
 from dynamic_graph.sot.pyrene.robot import Robot
+
+if not hasattr(sys, 'argv'):
+    sys.argv = [
+        "dynamic_graph",
+    ]
 
 print("Prologue Pyrene TALOS Robot")
 
@@ -19,8 +28,7 @@ def makeRobot():
     DeviceTalos = PyEntityFactoryClass('DeviceTalos')
 
     # Create the robot using the device.
-    robot = Robot(name='robot', device=DeviceTalos('PYRENE'))
-
+    robot = Robot(name='robot', device=DeviceTalos('PYRENE'), fromRosParam=True)
     robot.dynamic.com.recompute(0)
     _com = robot.dynamic.com.value
     robot.device.zmp.value = (_com[0], _com[1], 0.)
