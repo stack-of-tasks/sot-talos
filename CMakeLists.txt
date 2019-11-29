@@ -49,12 +49,13 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 
 ADD_PROJECT_DEPENDENCY(dynamic-graph 3.0.0 REQUIRED)
-ADD_REQUIRED_DEPENDENCY("sot-core >= 4.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-dynamic-pinocchio >= 3.1")
-ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
+ADD_PROJECT_DEPENDENCY(sot-core REQUIRED)
+ADD_PROJECT_DEPENDENCY(sot-dynamic-pinocchio REQUIRED)
+ADD_PROJECT_DEPENDENCY(dynamic-graph-python REQUIRED)
 
-ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge_msgs")
-ADD_REQUIRED_DEPENDENCY("dynamic_graph_bridge >= 3.0")
+ADD_PROJECT_DEPENDENCY(dynamic_graph_bridge_msgs REQUIRED)
+ADD_PROJECT_DEPENDENCY(dynamic_graph_bridge REQUIRED)
+ADD_PROJECT_DEPENDENCY(roscpp REQUIRED)
 
 ADD_OPTIONAL_DEPENDENCY("talos_data")
 ADD_OPTIONAL_DEPENDENCY("pyrene-motions")
@@ -69,6 +70,16 @@ SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+
+# catkin part
+SET(CATKIN_REQUIRED_COMPONENTS
+  roscpp std_msgs dynamic_graph_bridge_msgs dynamic_graph_bridge)
+SET(CATKIN_DEPENDS_LIBRARIES ros_bridge sot_loader)
+find_package(catkin REQUIRED
+  COMPONENTS ${CATKIN_REQUIRED_COMPONENTS})
+
+include_directories(${catkin_INCLUDE_DIRS})
 
 # Add subdirectories.
 ADD_SUBDIRECTORY(src)
@@ -119,4 +130,13 @@ IF(TALOS_DATA_FOUND)
 
 ENDIF(TALOS_DATA_FOUND)
 
-SETUP_PROJECT_FINALIZE()
+
+SETUP_PROJECT_PACKAGE_FINALIZE()
+
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
+
+LOGGING_FINALIZE()

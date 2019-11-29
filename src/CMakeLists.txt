@@ -26,9 +26,13 @@ FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
   TARGET_LINK_LIBRARIES(${NAME} dynamic-graph::dynamic-graph)
   TARGET_LINK_LIBRARIES(${NAME} sot-core::sot-core)
   TARGET_LINK_LIBRARIES(${NAME} eigen3)
+  TARGET_LINK_LIBRARIES(${NAME} roscpp)
+  TARGET_LINK_LIBRARIES(${NAME} roscpp)  
   PKG_CONFIG_USE_DEPENDENCY(${NAME} pinocchio)
 
-  INSTALL(TARGETS ${NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/plugin)
+  INSTALL(TARGETS ${NAME}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/plugin)
 
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${NAME})
@@ -67,17 +71,21 @@ MACRO(build_talos_device)
   )
 
   # Link the dynamic library containing the SoT with its dependencies.
-  PKG_PROJECT_DEPENDENCY(${DEVICE_NAME} "dynamic-graph")
-  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic-graph-python")
-  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "sot-core")
+  TARGET_LINK_LIBRARIES(${DEVICE_NAME} dynamic-graph::dynamic-graph)
+  TARGET_LINK_LIBRARIES(${DEVICE_NAME}
+    dynamic-graph-python::dynamic-graph-python )
+  TARGET_LINK_LIBRARIES(${DEVICE_NAME} sot-core::sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "pinocchio")
-  PKG_CONFIG_USE_DEPENDENCY(${DEVICE_NAME} "dynamic_graph_bridge")
+  TARGET_LINK_LIBRARIES(${DEVICE_NAME}
+    dynamic_graph_bridge::ros_bridge)
 
   IF(UNIX AND NOT APPLE)
     TARGET_LINK_LIBRARIES(${DEVICE_NAME} ${Boost_LIBRARIES})
   ENDIF(UNIX AND NOT APPLE)
 
-  INSTALL(TARGETS ${DEVICE_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  INSTALL(TARGETS ${DEVICE_NAME}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${DEVICE_NAME})
@@ -102,22 +110,28 @@ MACRO(build_talos_controller)
   )
 
   # Link the dynamic library containing the SoT with its dependencies.
-  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic-graph")
-  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic-graph-python")
-  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "sot-core")
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME}
+    dynamic-graph::dynamic-graph)
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME}
+    dynamic-graph-python::dynamic-graph-python)
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME}
+    sot-core::sot-core)
 
-  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic_graph_bridge")
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME}
+    dynamic_graph_bridge::ros_bridge)
 
-  ADD_DEPENDENCIES(${CONTROLLER_NAME} "sot-talos-device")
-  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "sot-talos-device")
-  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "ros_bridge")
-  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "ros_interpreter")
+  ADD_DEPENDENCIES(${CONTROLLER_NAME} sot-talos-device)
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} sot-talos-device)
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME}
+    dynamic_graph_bridge::ros_interpreter)
  
   IF(UNIX AND NOT APPLE)
     TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} ${Boost_LIBRARIES})
   ENDIF(UNIX AND NOT APPLE)
 
-  INSTALL(TARGETS ${CONTROLLER_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  INSTALL(TARGETS ${CONTROLLER_NAME}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 ENDMACRO()
 
