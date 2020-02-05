@@ -15,6 +15,10 @@ INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/ros.cmake)
 INCLUDE(cmake/python.cmake)
 
+OPTION(SUFFIX_SO_VERSION
+  "Suffix shared library name by a string depending on git status of project"
+  ON)
+
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
 SET(CXX_DISABLE_WERROR True)
