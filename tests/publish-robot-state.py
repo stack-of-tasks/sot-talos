@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # flake8: noqa
 import rospy
-from dynamic_graph_bridge.srv import *
 from dynamic_graph_bridge_msgs.srv import *
 from std_srvs.srv import *
 
