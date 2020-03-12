@@ -1,6 +1,6 @@
 /* Copyright 2018, CNRS
  * Author: O. Stasse
- * 
+ *
 BSD 2-Clause License
 
 Copyright (c) 2017, Stack Of Tasks development team
@@ -33,16 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \mainpage
 \section sec_intro Introduction
 
-This library implements a class called Device for the TALOS PAL-Robotics humanoid robots to be controlled with the Stack-Of-Tasks.
-A derived class is used for the first prototype of this line of humanoid robot, Pyrene.
+This library implements a class called Device for the TALOS PAL-Robotics humanoid robots to be controlled with the
+Stack-Of-Tasks. A derived class is used for the first prototype of this line of humanoid robot, Pyrene.
 
 This class is implementing a perception-action loop.
-To achieve this goal it is providing a Hardware Abstract Layer to communicate with the SoT control infra-structure and the robot or a simulator.
-It is fully compatible with the roscontrol_sot package to run on a TALOS humanoid robot or with the Gazebo simulator.
+To achieve this goal it is providing a Hardware Abstract Layer to communicate with the SoT control infra-structure and
+the robot or a simulator. It is fully compatible with the roscontrol_sot package to run on a TALOS humanoid robot or
+with the Gazebo simulator.
 
-The sot-talos package contains also the class sot-talos-controller. This class is used to start the multithreading environment which is handling ROS request, starts
-the python interpreter to control the SoT and finally handle
-the control states: initialization, nominal usage, stopping or cancellation. 
+The sot-talos package contains also the class sot-talos-controller. This class is used to start the multithreading
+environment which is handling ROS request, starts the python interpreter to control the SoT and finally handle the
+control states: initialization, nominal usage, stopping or cancellation.
 
 It also provides python scripts to be used to interact with the robot.
 
@@ -57,6 +58,6 @@ It also provides python scripts to be used to interact with the robot.
   <li> motor_angles </li>
   <li> p_gains </li>
   <li> d_gains</li>
-\section sot-talos-controller 
+\section sot-talos-controller
 
 */

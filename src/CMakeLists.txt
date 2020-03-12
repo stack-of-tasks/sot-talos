@@ -1,33 +1,21 @@
 # Copyright 2016, R. Budhiraja, Olivier Stasse, CNRS
-#
-# This file is part of sot-talos.
-# sot-talos is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# sot-talos is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# sot-talos. If not, see <http://www.gnu.org/licenses/>.
-
-INCLUDE(../cmake/python.cmake)
-FINDPYTHON()
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 FUNCTION(COMPILE_PLUGIN NAME SOURCES ENTITIES)
   ADD_LIBRARY(${NAME} SHARED ${SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES
     PREFIX ""
-    SOVERSION ${PROJECT_VERSION})
+    )
+  IF (SUFFIX_SO_VERSION)
+    SET_TARGET_PROPERTIES(${lib} PROPERTIES
+      SOVERSION ${PROJECT_VERSION}
+      )
+  ENDIF()
 
   TARGET_LINK_LIBRARIES(${NAME} dynamic-graph::dynamic-graph)
   TARGET_LINK_LIBRARIES(${NAME} sot-core::sot-core)
   TARGET_LINK_LIBRARIES(${NAME} eigen3)
   TARGET_LINK_LIBRARIES(${NAME} roscpp)
-  TARGET_LINK_LIBRARIES(${NAME} roscpp)  
+  TARGET_LINK_LIBRARIES(${NAME} roscpp)
   PKG_CONFIG_USE_DEPENDENCY(${NAME} pinocchio)
 
   INSTALL(TARGETS ${NAME}
@@ -54,7 +42,7 @@ PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "__init__.py" )
 PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "talos.py" )
 SET(FILES __init__.py robot.py)
 
-# Install dynamic_graph.sot.pyrene  
+# Install dynamic_graph.sot.pyrene
 SET(PYTHON_MODULE dynamic_graph/sot/pyrene)
 PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "__init__.py" )
 PYTHON_INSTALL_ON_SITE("${PYTHON_MODULE}" "robot.py" "${PYTHON_SITELIB}")
@@ -124,7 +112,11 @@ MACRO(build_talos_controller)
   TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} sot-talos-device)
   TARGET_LINK_LIBRARIES(${CONTROLLER_NAME}
     dynamic_graph_bridge::ros_interpreter)
- 
+
+  PKG_CONFIG_USE_DEPENDENCY(${CONTROLLER_NAME} "dynamic_graph_bridge")
+
+  TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} "ros_bridge")
+
   IF(UNIX AND NOT APPLE)
     TARGET_LINK_LIBRARIES(${CONTROLLER_NAME} ${Boost_LIBRARIES})
   ENDIF(UNIX AND NOT APPLE)
@@ -136,4 +128,3 @@ MACRO(build_talos_controller)
 ENDMACRO()
 
 build_talos_controller()
-

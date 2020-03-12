@@ -1,12 +1,23 @@
 # Copyright 2016, Thomas Moulard, Olivier Stasse, JRL, CNRS/AIST
 #
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-talos)
 SET(PROJECT_DESCRIPTION "dynamic-graph package for Talos robot")
 SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
+
+INCLUDE(cmake/base.cmake)
+INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/eigen.cmake)
+INCLUDE(cmake/lapack.cmake)
+INCLUDE(cmake/ros.cmake)
+INCLUDE(cmake/python.cmake)
+
+OPTION(SUFFIX_SO_VERSION
+  "Suffix shared library name by a string depending on git status of project"
+  ON)
 
 # Export CMake Target
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
@@ -43,6 +54,8 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
   plugindir
   )
 
+CMAKE_POLICY(SET CMP0048 OLD)
+PROJECT(${PROJECT_NAME} CXX)
 
 # Search for dependencies.
 
@@ -62,6 +75,9 @@ ADD_OPTIONAL_DEPENDENCY("pyrene-motions")
 
 # Search for dependencies.
 # Boost
+
+FINDPYTHON()
+INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_PATH})
 
 # Handle rpath necessary to handle ROS multiplace packages
 # libraries inclusion
@@ -129,14 +145,3 @@ IF(TALOS_DATA_FOUND)
     )
 
 ENDIF(TALOS_DATA_FOUND)
-
-
-SETUP_PROJECT_PACKAGE_FINALIZE()
-
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
-
-LOGGING_FINALIZE()

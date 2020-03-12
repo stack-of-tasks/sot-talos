@@ -1,42 +1,57 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016, Olivier Stasse, CNRS
-#
-# This file is part of sot-talos.
-# sot-talos is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# sot-talos is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# sot-talos. If not, see <http://www.gnu.org/licenses/>.
-
 
 from dynamic_graph.sot.talos import Talos
-import numpy as np
 
-class Robot (Talos):
+
+class Robot(Talos):
     """
     This class instantiates LAAS TALOS Robot
     """
 
+    halfSitting = (
+        0.0,
+        0.0,
+        1.018213,
+        0.00,
+        0.0,
+        0.0,  # Free flyer
+        0.0,
+        0.0,
+        -0.411354,
+        0.859395,
+        -0.448041,
+        -0.001708,  # Left Leg
+        0.0,
+        0.0,
+        -0.411354,
+        0.859395,
+        -0.448041,
+        -0.001708,  # Right Leg
+        0.0,
+        0.006761,  # Chest
+        0.25847,
+        0.173046,
+        -0.0002,
+        -0.525366,
+        0.0,
+        -0.0,
+        0.1,
+        -0.005,  # Left Arm
+        -0.25847,
+        -0.173046,
+        0.0002,
+        -0.525366,
+        0.0,
+        0.0,
+        0.1,
+        -0.005,  # Right Arm
+        0.,
+        0.  # Head
+    )
 
-    halfSitting = (0.0, 0.0,  1.018213,  0.00  ,  0.0, 0.0,                         #Free flyer
-                   0.0,  0.0, -0.411354,  0.859395, -0.448041, -0.001708, #Left Leg
-                   0.0,  0.0, -0.411354,  0.859395, -0.448041, -0.001708, #Right Leg
-                   0.0 ,  0.006761,                                                 #Chest
-                   0.25847 ,  0.173046, -0.0002, -0.525366, 0.0, -0.0,  0.1, -0.005,        #Left Arm
-                  -0.25847 , -0.173046, 0.0002  , -0.525366, 0.0,  0.0,  0.1,-0.005,      #Right Arm
-                   0.,  0.                                                          #Head
-               )
-
-    def __init__(self, name,
-                 device = None,
-                 tracer = None):
-        Talos.__init__(self,name,self.halfSitting,device,tracer)
+    def __init__(self, name, device=None, tracer=None, fromRosParam=None):
+        Talos.__init__(self, name, self.halfSitting, device, tracer)
         """
         TODO:Confirm these values
         # Define camera positions w.r.t gaze.
@@ -64,7 +79,7 @@ class Robot (Talos):
             (-0.03999, 0.00000, 0.99920,  0.145 - 0.03),
             (0.,       0.,      0.,       1.),
         ))
-        # Frames re-orientation: 
+        # Frames re-orientation:
         # Z = depth (increase from near to far)
         # X = increase from left to right
         # Y = increase from top to bottom
@@ -74,7 +89,7 @@ class Robot (Talos):
              [-1.,  0.,  0., 0.],
              [ 0., -1.,  0., 0.],
              [ 0.,  0.,  0., 1.]])
-        
+
         for camera in [cameraBottomLeftPosition, cameraBottomRightPosition,
                        cameraTopLeftPosition, cameraTopRightPosition]:
             camera[:] = camera * c1_M_c
@@ -92,5 +107,6 @@ class Robot (Talos):
             ("cameraTopRight",
              matrixToTuple(cameraTopRightPosition), "gaze"))
         """
+
 
 __all__ = ["Robot"]

@@ -1,29 +1,16 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016, Olivier STASSE, LAAS-CNRS
-#
-# This file is part of TALOSController.
-# TALOSController is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# TALOSController is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# TALOSController. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
 
-import numpy as np
-
-from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import AbstractHumanoidRobot
-from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
 from dynamic_graph import plug
-
-import pinocchio as se3
+from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
+from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
+from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import AbstractHumanoidRobot
+from pinocchio import JointModelFreeFlyer, buildModelFromXML, buildReducedModel, neutral
+from pinocchio.robot_wrapper import RobotWrapper
 from rospkg import RosPack
+
 
 # Internal helper tool.
 def matrixToTuple(M):
@@ -33,19 +20,15 @@ def matrixToTuple(M):
         res.append(tuple(i))
     return tuple(res)
 
+
 class Talos(AbstractHumanoidRobot):
     """
     This class defines a Talos robot
     """
 
-    forceSensorInLeftAnkle =  ((1.,0.,0.,0.),
-                               (0.,1.,0.,0.),
-                               (0.,0.,1.,-0.107),
-                               (0.,0.,0.,1.))
-    forceSensorInRightAnkle = ((1.,0.,0.,0.),
-                               (0.,1.,0.,0.),
-                               (0.,0.,1.,-0.107),
-                               (0.,0.,0.,1.))
+    forceSensorInLeftAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., -0.107), (0., 0., 0., 1.))
+    forceSensorInRightAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., -0.107), (0., 0., 0., 1.))
+    defaultFilename = "talos_reduced_v2.urdf"
     """
     TODO: Confirm the position and existence of these sensors
     accelerometerPosition = np.matrix ((
@@ -63,41 +46,66 @@ class Talos(AbstractHumanoidRobot):
             ))
     """
     def smallToFull(self, config):
-        #Gripper position in full configuration: 27:34, and 41:48
-        #Small configuration: 36 DOF
-        #Full configuration: 50 DOF
-        res = config[0:27] + 7*(0.,) + config[27:34]+ 7*(0.,)+config[34:]
+        # Gripper position in full configuration: 27:34, and 41:48
+        # Small configuration: 36 DOF
+        # Full configuration: 50 DOF
+        res = config[0:27] + 7 * (0., ) + config[27:34] + 7 * (0., ) + config[34:]
         return res
 
-    def __init__(self, name, initialConfig, device = None, tracer = None):
-        self.OperationalPointsMap = {'left-wrist'  : 'arm_left_7_joint',
-                                     'right-wrist' : 'arm_right_7_joint',
-                                     'left-ankle'  : 'leg_left_6_joint',
-                                     'right-ankle' : 'leg_right_6_joint',
-                                     'gaze'        : 'head_2_joint',
-                                     'waist'       : 'root_joint',
-                                     'chest'       : 'torso_2_joint'}
+    def __init__(self, name, initialConfig, device=None, tracer=None, fromRosParam=False):
+        self.OperationalPointsMap = {
+            'left-wrist': 'arm_left_7_joint',
+            'right-wrist': 'arm_right_7_joint',
+            'left-ankle': 'leg_left_6_joint',
+            'right-ankle': 'leg_right_6_joint',
+            'gaze': 'head_2_joint',
+            'waist': 'root_joint',
+            'chest': 'torso_2_joint'
+        }
 
-        from rospkg import RosPack
-        rospack = RosPack()
-        urdfPath = rospack.get_path('talos_data')+"/urdf/talos_reduced_v2.urdf"
-        urdfDir = [rospack.get_path('talos_data')+"/../"]
+        if fromRosParam:
+            print("Using ROS parameter \"/robot_description\"")
+            rosParamName = "/robot_description"
+            import rospy
+            if rosParamName not in rospy.get_param_names():
+                raise RuntimeError('"' + rosParamName + '" is not a ROS parameter.')
+            s = rospy.get_param(rosParamName)
+            model = buildModelFromXML(s, JointModelFreeFlyer())
 
-        # Create a wrapper to access the dynamic model provided through an urdf file.
-        from pinocchio.robot_wrapper import RobotWrapper
-        import pinocchio as se3
-        from dynamic_graph.sot.dynamics_pinocchio import fromSotToPinocchio
-        pinocchioRobot = RobotWrapper()
-        pinocchioRobot.initFromURDF(urdfPath, urdfDir, se3.JointModelFreeFlyer())
+            # get mimic joints
+            mimicJoints = list()
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(s)
+            for e in root.iter('joint'):
+                if 'name' in e.attrib:
+                    name = e.attrib['name']
+                    for c in e._children:
+                        if hasattr(c, 'tag') and c.tag == 'mimic':
+                            mimicJoints.append(name)
+            jointIds = list()
+            for j in mimicJoints:
+                jointIds.append(model.getJointId(j))
+            q = neutral(model)
+            reducedModel = buildReducedModel(model, jointIds, q)
+            pinocchioRobot = RobotWrapper(model=reducedModel)
+        else:
+            # Create a wrapper to access the dynamic model provided
+            # through an urdf file.
+            pinocchioRobot = RobotWrapper()
+            rospack = RosPack()
+            urdfPath = rospack.get_path('talos_data') + "/urdf/" + self.defaultFilename
+            urdfDir = [rospack.get_path('talos_data') + "/../"]
+            pinocchioRobot.initFromURDF(urdfPath, urdfDir, JointModelFreeFlyer())
+
         self.pinocchioModel = pinocchioRobot.model
         self.pinocchioData = pinocchioRobot.data
 
-        AbstractHumanoidRobot.__init__ (self, name, tracer)
+        AbstractHumanoidRobot.__init__(self, name, tracer)
 
         self.OperationalPoints.append('waist')
         self.OperationalPoints.append('chest')
 
-        # Create rigid body dynamics model and data (pinocchio) 
+        # Create rigid body dynamics model and data (pinocchio)
         self.dynamic = DynamicPinocchio(self.name + "_dynamic")
         self.dynamic.setModel(self.pinocchioModel)
         self.dynamic.setData(self.pinocchioData)
@@ -110,26 +118,21 @@ class Talos(AbstractHumanoidRobot):
         # TODO For position limit, we remove the first value to get
         # a vector of the good size because SoT use euler angles and not
         # quaternions...
-        self.device.setPositionBounds (
-                self.pinocchioModel.lowerPositionLimit.T.tolist()[0][1:],
-                self.pinocchioModel.upperPositionLimit.T.tolist()[0][1:])
-        self.device.setVelocityBounds (
-                (-self.pinocchioModel.velocityLimit).T.tolist()[0],
-                  self.pinocchioModel.velocityLimit .T.tolist()[0])
-        self.device.setTorqueBounds (
-                (-self.pinocchioModel.effortLimit).T.tolist()[0],
-                  self.pinocchioModel.effortLimit .T.tolist()[0])
+        self.device.setPositionBounds(self.pinocchioModel.lowerPositionLimit.T.tolist()[0][1:],
+                                      self.pinocchioModel.upperPositionLimit.T.tolist()[0][1:])
+        self.device.setVelocityBounds((-self.pinocchioModel.velocityLimit).T.tolist()[0],
+                                      self.pinocchioModel.velocityLimit.T.tolist()[0])
+        self.device.setTorqueBounds((-self.pinocchioModel.effortLimit).T.tolist()[0],
+                                    self.pinocchioModel.effortLimit.T.tolist()[0])
         self.halfSitting = initialConfig
         self.device.set(self.halfSitting)
         plug(self.device.state, self.dynamic.position)
 
         self.AdditionalFrames.append(
-            ("leftFootForceSensor",
-             self.forceSensorInLeftAnkle, self.OperationalPointsMap["left-ankle"]))
+            ("leftFootForceSensor", self.forceSensorInLeftAnkle, self.OperationalPointsMap["left-ankle"]))
         self.AdditionalFrames.append(
-            ("rightFootForceSensor",
-             self.forceSensorInRightAnkle, self.OperationalPointsMap["right-ankle"]))
-        
+            ("rightFootForceSensor", self.forceSensorInRightAnkle, self.OperationalPointsMap["right-ankle"]))
+
         self.dimension = self.dynamic.getDimension()
         self.plugVelocityFromDevice = True
         self.dynamic.displayModel()
@@ -141,21 +144,21 @@ class Talos(AbstractHumanoidRobot):
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
-            self.dynamic.velocity.value = self.dimension*(0.,)
+            self.dynamic.velocity.value = self.dimension * (0., )
 
-        # Initialize acceleration derivator if chosen            
+        # Initialize acceleration derivator if chosen
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
                 Derivator_of_Vector('accelerationDerivator')
             self.accelerationDerivator.dt.value = self.timeStep
-            plug(self.velocityDerivator.sout,
-                 self.accelerationDerivator.sin)
+            plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
-            self.dynamic.acceleration.value = self.dimension*(0.,)
+            self.dynamic.acceleration.value = self.dimension * (0., )
 
         # Create operational points based on operational points map (if provided)
         if self.OperationalPointsMap is not None:
             self.initializeOpPoints()
+
 
 __all__ = [Talos]

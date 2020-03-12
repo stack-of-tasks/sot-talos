@@ -1,22 +1,28 @@
 #!/usr/bin/python
-import sys
+# flake8: noqa
 import rospy
-
-from std_srvs.srv import *
 from dynamic_graph_bridge.srv import *
 from dynamic_graph_bridge_msgs.srv import *
+from std_srvs.srv import *
 
-def launchScript(code,title,description = ""):
-    raw_input(title+':   '+description)
+try:
+    # Python 2
+    input = raw_input
+except NameError:
+    pass
+
+
+def launchScript(code, title, description=""):
+    input(title + ':   ' + description)
     rospy.loginfo(title)
     rospy.loginfo(code)
     for line in code:
         if line != '' and line[0] != '#':
-            print line
+            print(line)
             answer = runCommandClient(str(line))
             rospy.logdebug(answer)
-            print answer
-    rospy.loginfo("...done with "+title)
+            print(answer)
+    rospy.loginfo("...done with " + title)
 
 
 # Waiting for services
@@ -32,8 +38,8 @@ try:
     runCommandClient = rospy.ServiceProxy('run_command', RunCommand)
     runCommandStartDynamicGraph = rospy.ServiceProxy('start_dynamic_graph', Empty)
 
-    initCode = open( "appli_basic.py", "r").read().split("\n")
-    
+    initCode = open("appli_basic.py", "r").read().split("\n")
+
     rospy.loginfo("Stack of Tasks launched")
 
     # runCommandClient("from dynamic_graph import plug")
@@ -42,10 +48,9 @@ try:
     # runCommandClient("sot.setSize(robot.dynamic.getDimension())")
     # runCommandClient("plug(sot.control,robot.device.control)")
 
-    launchScript(initCode,'initialize SoT')
-    raw_input("Wait before starting the dynamic graph")
+    launchScript(initCode, 'initialize SoT')
+    input("Wait before starting the dynamic graph")
     runCommandStartDynamicGraph()
 
-except rospy.ServiceException, e:
+except rospy.ServiceException as e:
     rospy.logerr("Service call failed: %s" % e)
-

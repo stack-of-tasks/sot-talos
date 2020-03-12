@@ -11,6 +11,8 @@
 #ifndef _SOT_TalosController_H_
 #define _SOT_TalosController_H_
 
+#include <pinocchio/fwd.hpp>
+
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal.h>
 #include <dynamic-graph/signal-ptr.h>
@@ -20,23 +22,20 @@
 
 #include "sot-talos-device.hh"
 #include <dynamic_graph_bridge/ros_interpreter.hh>
-namespace dgsot=dynamicgraph::sot;
+namespace dgsot = dynamicgraph::sot;
 
-class SoTTalosController: public 
-  dgsot::AbstractSotExternalInterface
-{
+class SoTTalosController : public dgsot::AbstractSotExternalInterface {
  public:
-
   static const std::string LOG_PYTHON;
-  
+
   SoTTalosController();
   SoTTalosController(const char robotName[]);
   SoTTalosController(std::string robotName);
   virtual ~SoTTalosController();
 
-  void setupSetSensors(std::map<std::string,dgsot::SensorValues> &sensorsIn);
+  void setupSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
 
-  void nominalSetSensors(std::map<std::string,dgsot::SensorValues> &sensorsIn);
+  void nominalSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
 
   void cleanupSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
 
@@ -56,17 +55,14 @@ class SoTTalosController: public
   // dynamic graph.
   void updateRobotState(std::vector<double> &anglesIn);
 
-  /// Run a python command 
-  void runPython(std::ostream& file,
-		 const std::string& command,
-		 dynamicgraph::Interpreter& interpreter);
-  
+  /// Run a python command
+  void runPython(std::ostream &file, const std::string &command, dynamicgraph::Interpreter &interpreter);
+
   virtual void startupPython();
-    
+
   void init();
 
-  SoTTalosDevice* device_;
+  SoTTalosDevice *device_;
 };
 
 #endif /* _SOT_TalosController_H_ */
-
