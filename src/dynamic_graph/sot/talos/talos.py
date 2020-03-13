@@ -118,12 +118,12 @@ class Talos(AbstractHumanoidRobot):
         # TODO For position limit, we remove the first value to get
         # a vector of the good size because SoT use euler angles and not
         # quaternions...
-        self.device.setPositionBounds(self.pinocchioModel.lowerPositionLimit.T.tolist()[0][1:],
-                                      self.pinocchioModel.upperPositionLimit.T.tolist()[0][1:])
-        self.device.setVelocityBounds((-self.pinocchioModel.velocityLimit).T.tolist()[0],
-                                      self.pinocchioModel.velocityLimit.T.tolist()[0])
-        self.device.setTorqueBounds((-self.pinocchioModel.effortLimit).T.tolist()[0],
-                                    self.pinocchioModel.effortLimit.T.tolist()[0])
+        self.device.setPositionBounds(self.pinocchioModel.lowerPositionLimit.tolist()[1:],
+                                      self.pinocchioModel.upperPositionLimit.tolist()[1:])
+        self.device.setVelocityBounds((-self.pinocchioModel.velocityLimit).tolist(),
+                                      self.pinocchioModel.velocityLimit.tolist())
+        self.device.setTorqueBounds((-self.pinocchioModel.effortLimit).tolist(),
+                                    self.pinocchioModel.effortLimit.tolist())
         self.halfSitting = initialConfig
         self.device.set(self.halfSitting)
         plug(self.device.state, self.dynamic.position)
