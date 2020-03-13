@@ -11,8 +11,8 @@ from dynamic_graph import plug
 from dynamic_graph.sot.core import SOT, FeatureGeneric, GainAdaptive, Selec_of_vector, Task
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from dynamic_graph.sot.core.meta_tasks import setGain
-from dynamic_graph.sot.dynamics_pinocchio import fromSotToPinocchio
-from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import HumanoidRobot
+from dynamic_graph.sot.dynamic_pinocchio import fromSotToPinocchio
+from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import HumanoidRobot
 from dynamic_graph.sot.tools import SimpleSeqPlay
 from numpy import hstack, identity, zeros
 from pinocchio.robot_wrapper import RobotWrapper
