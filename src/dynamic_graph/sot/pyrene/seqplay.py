@@ -2,7 +2,8 @@
 # Copyright 2012, CNRS-LAAS, Florent Lamiraux
 
 import numpy as np
-from dynamic_graph.sot.core import RPYToMatrix
+
+from dynamic_graph.sot.core.matrix_util import RPYToMatrix
 from dynamic_graph.sot.pyrene.robot import Robot
 from dynamic_graph.sot.tools.se3 import R3, SE3
 

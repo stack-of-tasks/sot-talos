@@ -42,7 +42,7 @@ try:
     rospy.loginfo("Stack of Tasks launched")
 
     # runCommandClient("from dynamic_graph import plug")
-    # runCommandClient("from dynamic_graph.sot.core import SOT")
+    # runCommandClient("from dynamic_graph.sot.core.sot import SOT")
     # runCommandClient("sot = SOT('sot')")
     # runCommandClient("sot.setSize(robot.dynamic.getDimension())")
     # runCommandClient("plug(sot.control,robot.device.control)")

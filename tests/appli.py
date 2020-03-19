@@ -1,9 +1,9 @@
 # flake8: noqa
 from dynamic_graph import plug
 from dynamic_graph.ros import RosPublish
-from dynamic_graph.sot.core import SOT
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
-from dynamic_graph.sot.core.meta_tasks_kine import MetaTaskKine6d, MetaTaskKineCom, gotoNd
+from dynamic_graph.sot.core.meta_tasks_kine import (MetaTaskKine6d, MetaTaskKineCom, gotoNd)
+from dynamic_graph.sot.core.sot import SOT
 from numpy import eye
 
 taskRH = MetaTaskKine6d('rh', robot.dynamic, 'rh', robot.OperationalPointsMap['right-wrist'])
@@ -23,13 +23,11 @@ contactLF = MetaTaskKine6d('contactLF', robot.dynamic, 'LF', robot.OperationalPo
 contactLF.feature.frame('desired')
 contactLF.gain.setConstant(10)
 contactLF.keep()
-locals()['contactLF'] = contactLF
 
 contactRF = MetaTaskKine6d('contactRF', robot.dynamic, 'RF', robot.OperationalPointsMap['right-ankle'])
 contactRF.feature.frame('desired')
 contactRF.gain.setConstant(10)
 contactRF.keep()
-locals()['contactRF'] = contactRF
 
 sot = SOT('sot')
 sot.setSize(robot.dynamic.getDimension())

@@ -1,13 +1,17 @@
 # flake8: noqa
 # from dynamic_graph.sot.core.meta_task_posture import MetaTaskKinePosture
+from numpy import eye, hstack, identity, zeros
+
 from dynamic_graph import plug
-# Create the solver
-# Connects the sequence player to the posture task
-from dynamic_graph.sot.core import SOT, FeatureGeneric, GainAdaptive, Selec_of_vector, Task
+from dynamic_graph.sot.core.feature_generic import FeatureGeneric
+from dynamic_graph.sot.core.gain_adaptive import GainAdaptive
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from dynamic_graph.sot.core.meta_tasks import setGain
+from dynamic_graph.sot.core.operator import Selec_of_vector
+# Create the solver
+# Connects the sequence player to the posture task
+from dynamic_graph.sot.core.sot import SOT, Task
 from dynamic_graph.sot.tools import SimpleSeqPlay
-from numpy import eye, hstack, identity, zeros
 
 # Create the posture task
 task_name = "posture_task"

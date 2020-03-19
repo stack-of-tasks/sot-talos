@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # flake8: noqa
 import rospy
-from dynamic_graph_bridge_msgs.srv import *
 from std_srvs.srv import *
+
+from dynamic_graph_bridge_msgs.srv import *
 
 try:
     # Python 2
@@ -37,12 +38,13 @@ try:
     runCommandClient = rospy.ServiceProxy('run_command', RunCommand)
     runCommandStartDynamicGraph = rospy.ServiceProxy('start_dynamic_graph', Empty)
 
-    initCode = open("appli.py", "r").read().split("\n")
+    with open("appli.py", "r") as f:
+        initCode = f.read().split("\n")
 
     rospy.loginfo("Stack of Tasks launched")
 
     # runCommandClient("from dynamic_graph import plug")
-    # runCommandClient("from dynamic_graph.sot.core import SOT")
+    # runCommandClient("from dynamic_graph.sot.core.sot import SOT")
     # runCommandClient("sot = SOT('sot')")
     # runCommandClient("sot.setSize(robot.dynamic.getDimension())")
     # runCommandClient("plug(sot.control,robot.device.control)")
