@@ -29,8 +29,7 @@ PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 # Project dependencies
 SET(BOOST_COMPONENTS filesystem system thread program_options
   unit_test_framework python)
-SET(CATKIN_REQUIRED_COMPONENTS
-  roscpp std_msgs dynamic_graph_bridge_msgs dynamic_graph_bridge)
+SET(CATKIN_REQUIRED_COMPONENTS roscpp std_msgs)
 SET(CATKIN_DEPENDS_LIBRARIES ros_bridge sot_loader)
 
 ADD_PROJECT_DEPENDENCY(sot-dynamic-pinocchio REQUIRED)
