@@ -5,10 +5,9 @@ from __future__ import print_function
 
 from dynamic_graph import plug
 from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
-from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
-from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import AbstractHumanoidRobot
-from pinocchio import JointModelFreeFlyer, buildModelFromXML, buildReducedModel, neutral
-from pinocchio.robot_wrapper import RobotWrapper
+from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
+from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import AbstractHumanoidRobot
+import pinocchio
 from rospkg import RosPack
 
 
@@ -28,7 +27,7 @@ class Talos(AbstractHumanoidRobot):
 
     forceSensorInLeftAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., -0.107), (0., 0., 0., 1.))
     forceSensorInRightAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., -0.107), (0., 0., 0., 1.))
-    defaultFilename = "talos_reduced_v2.urdf"
+    defaultFilename = "package://talos_data/urdf/talos_reduced_v2.urdf"
     """
     TODO: Confirm the position and existence of these sensors
     accelerometerPosition = np.matrix ((
@@ -70,35 +69,16 @@ class Talos(AbstractHumanoidRobot):
             if rosParamName not in rospy.get_param_names():
                 raise RuntimeError('"' + rosParamName + '" is not a ROS parameter.')
             s = rospy.get_param(rosParamName)
-            model = buildModelFromXML(s, JointModelFreeFlyer())
 
-            # get mimic joints
-            mimicJoints = list()
-            import xml.etree.ElementTree as ET
-            root = ET.fromstring(s)
-            for e in root.iter('joint'):
-                if 'name' in e.attrib:
-                    name = e.attrib['name']
-                    for c in e._children:
-                        if hasattr(c, 'tag') and c.tag == 'mimic':
-                            mimicJoints.append(name)
-            jointIds = list()
-            for j in mimicJoints:
-                jointIds.append(model.getJointId(j))
-            q = neutral(model)
-            reducedModel = buildReducedModel(model, jointIds, q)
-            pinocchioRobot = RobotWrapper(model=reducedModel)
+            self.loadModelFromString(s, rootJointType=pinocchio.JointModelFreeFlyer,
+                    removeMimicJoints=True)
         else:
-            # Create a wrapper to access the dynamic model provided
-            # through an urdf file.
-            pinocchioRobot = RobotWrapper()
-            rospack = RosPack()
-            urdfPath = rospack.get_path('talos_data') + "/urdf/" + self.defaultFilename
-            urdfDir = [rospack.get_path('talos_data') + "/../"]
-            pinocchioRobot.initFromURDF(urdfPath, urdfDir, JointModelFreeFlyer())
+            self.loadModelFromUrdf(self.defaultFilename,
+                    rootJointType=pinocchio.JointModelFreeFlyer,
+                    removeMimicJoints=True)
 
-        self.pinocchioModel = pinocchioRobot.model
-        self.pinocchioData = pinocchioRobot.data
+        assert hasattr(self, "pinocchioModel")
+        assert hasattr(self, "pinocchioData")
 
         AbstractHumanoidRobot.__init__(self, name, tracer)
 
