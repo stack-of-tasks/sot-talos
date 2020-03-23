@@ -5,8 +5,8 @@ from __future__ import print_function
 
 from dynamic_graph import plug
 from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
-from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
-from dynamic_graph.sot.dynamics_pinocchio.humanoid_robot import AbstractHumanoidRobot
+from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
+from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import AbstractHumanoidRobot
 import pinocchio
 from rospkg import RosPack
 
@@ -89,52 +89,15 @@ class Talos(AbstractHumanoidRobot):
         self.dynamic = DynamicPinocchio(self.name + "_dynamic")
         self.dynamic.setModel(self.pinocchioModel)
         self.dynamic.setData(self.pinocchioData)
+        self.dynamic.displayModel()
         self.dimension = self.dynamic.getDimension()
 
-        # Initialize device
-        self.device = device
-        self.timeStep = self.device.getTimeStep()
-        self.device.resize(self.dynamic.getDimension())
-        # TODO For position limit, we remove the first value to get
-        # a vector of the good size because SoT use euler angles and not
-        # quaternions...
-        self.device.setPositionBounds(self.pinocchioModel.lowerPositionLimit.tolist()[1:],
-                                      self.pinocchioModel.upperPositionLimit.tolist()[1:])
-        self.device.setVelocityBounds((-self.pinocchioModel.velocityLimit).tolist(),
-                                      self.pinocchioModel.velocityLimit.tolist())
-        self.device.setTorqueBounds((-self.pinocchioModel.effortLimit).tolist(),
-                                    self.pinocchioModel.effortLimit.tolist())
-        self.halfSitting = initialConfig
-        self.device.set(self.halfSitting)
-        plug(self.device.state, self.dynamic.position)
+        self.initializeRobot()
 
         self.AdditionalFrames.append(
             ("leftFootForceSensor", self.forceSensorInLeftAnkle, self.OperationalPointsMap["left-ankle"]))
         self.AdditionalFrames.append(
             ("rightFootForceSensor", self.forceSensorInRightAnkle, self.OperationalPointsMap["right-ankle"]))
-
-        self.dimension = self.dynamic.getDimension()
-        self.plugVelocityFromDevice = True
-        self.dynamic.displayModel()
-
-        # Initialize velocity derivator if chosen
-        if self.enableVelocityDerivator:
-            self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
-            self.velocityDerivator.dt.value = self.timeStep
-            plug(self.device.state, self.velocityDerivator.sin)
-            plug(self.velocityDerivator.sout, self.dynamic.velocity)
-        else:
-            self.dynamic.velocity.value = self.dimension * (0., )
-
-        # Initialize acceleration derivator if chosen
-        if self.enableAccelerationDerivator:
-            self.accelerationDerivator = \
-                Derivator_of_Vector('accelerationDerivator')
-            self.accelerationDerivator.dt.value = self.timeStep
-            plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
-            plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
-        else:
-            self.dynamic.acceleration.value = self.dimension * (0., )
 
         # Create operational points based on operational points map (if provided)
         if self.OperationalPointsMap is not None:
