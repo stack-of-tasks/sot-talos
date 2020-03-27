@@ -17,6 +17,7 @@ SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 SET(CUSTOM_HEADER_DIR "sot/talos")
 SET(CXX_DISABLE_WERROR TRUE)
 
+# JRL-cmakemodule setup
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/python.cmake)

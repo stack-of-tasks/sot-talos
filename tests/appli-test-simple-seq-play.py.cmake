@@ -3,7 +3,9 @@ from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from dynamic_graph.sot.tools import SimpleSeqPlay
 from numpy import eye
 
-from dynamic_graph.sot.core import Task, FeatureGeneric, GainAdaptive
+from dynamic_graph.sot.core.sot import import Task
+from dynamic_graph.sot.core.feature_generic FeatureGeneric
+from dynamic_graph.sot.core.gain_adaptive import GainAdaptive
 from dynamic_graph.sot.core.meta_tasks import setGain
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from numpy import identity, hstack, zeros
@@ -29,7 +31,7 @@ aSimpleSeqPlay = SimpleSeqPlay('aSimpleSeqPlay')
 aSimpleSeqPlay.load("@PYRENE_MOTIONS_DATAROOTDIR@/pyrene-motions/grabHandrail15/stairs_15cm_handrail_grab_actuated")
 aSimpleSeqPlay.setTimeToStart(10.0)
 # Connects the sequence player to the posture task
-from dynamic_graph.sot.core import Selec_of_vector
+from dynamic_graph.sot.core.operator import Selec_of_vector
 from dynamic_graph import plug
 
 plug(aSimpleSeqPlay.posture, taskPosture.featureDes.errorIN)
@@ -47,7 +49,7 @@ plug(taskPosture.gain.gain, taskPosture.controlGain)
 plug(taskPosture.error, taskPosture.gain.error)
 
 # Create the solver
-from dynamic_graph.sot.core import SOT
+from dynamic_graph.sot.core.sot import SOT
 sot = SOT('sot')
 sot.setSize(robot.dynamic.getDimension())
 plug(sot.control,robot.device.control)
