@@ -92,6 +92,7 @@ class Talos(AbstractHumanoidRobot):
         self.dynamic.displayModel()
         self.dimension = self.dynamic.getDimension()
 
+        self.device = device
         self.initializeRobot()
 
         self.AdditionalFrames.append(
