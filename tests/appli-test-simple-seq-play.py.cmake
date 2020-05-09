@@ -3,8 +3,8 @@ from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from dynamic_graph.sot.tools import SimpleSeqPlay
 from numpy import eye
 
-from dynamic_graph.sot.core.sot import import Task
-from dynamic_graph.sot.core.feature_generic FeatureGeneric
+from dynamic_graph.sot.core.sot import Task
+from dynamic_graph.sot.core.feature_generic import FeatureGeneric
 from dynamic_graph.sot.core.gain_adaptive import GainAdaptive
 from dynamic_graph.sot.core.meta_tasks import setGain
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
