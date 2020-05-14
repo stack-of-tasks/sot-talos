@@ -81,7 +81,7 @@ class Talos(AbstractHumanoidRobot):
         assert hasattr(self, "pinocchioModel")
         assert hasattr(self, "pinocchioData")
 
-        if device != None:
+        if device is not None:
             self.device = device
         AbstractHumanoidRobot.__init__(self, name, tracer)
 
