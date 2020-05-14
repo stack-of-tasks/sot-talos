@@ -51,7 +51,7 @@ class Talos(AbstractHumanoidRobot):
         res = config[0:27] + 7 * (0., ) + config[27:34] + 7 * (0., ) + config[34:]
         return res
 
-    def __init__(self, name, initialConfig, device=None, tracer=None, fromRosParam=False):
+    def __init__(self, name, device=None, tracer=None, fromRosParam=False):
         self.OperationalPointsMap = {
             'left-wrist': 'arm_left_7_joint',
             'right-wrist': 'arm_right_7_joint',
@@ -80,6 +80,8 @@ class Talos(AbstractHumanoidRobot):
         assert hasattr(self, "pinocchioModel")
         assert hasattr(self, "pinocchioData")
 
+	if device!=None:
+	    self.device = device
         AbstractHumanoidRobot.__init__(self, name, tracer)
 
         self.OperationalPoints.append('waist')
@@ -92,7 +94,6 @@ class Talos(AbstractHumanoidRobot):
         self.dynamic.displayModel()
         self.dimension = self.dynamic.getDimension()
 
-        self.device = device
         self.initializeRobot()
 
         self.AdditionalFrames.append(
