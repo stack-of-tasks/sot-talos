@@ -48,8 +48,7 @@ class Robot(Talos):
                 [ 0., 0.])
 
     def __init__(self, name, device=None, tracer=None, fromRosParam=None):
-        Talos.__init__(self, name, device, tracer,
-                fromRosParam=fromRosParam)
+        Talos.__init__(self, name, device=device, tracer=tracer, fromRosParam=fromRosParam)
         """
         TODO:Confirm these values
         # Define camera positions w.r.t gaze.

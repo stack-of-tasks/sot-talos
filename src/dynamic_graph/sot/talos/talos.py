@@ -3,11 +3,13 @@
 
 from __future__ import print_function
 
+import pinocchio
+
 from dynamic_graph import plug
 from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
-from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import AbstractHumanoidRobot
-import pinocchio
+from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import \
+    AbstractHumanoidRobot
 from rospkg import RosPack
 
 
@@ -51,7 +53,7 @@ class Talos(AbstractHumanoidRobot):
         res = config[0:27] + 7 * (0., ) + config[27:34] + 7 * (0., ) + config[34:]
         return res
 
-    def __init__(self, name, initialConfig, device=None, tracer=None, fromRosParam=False):
+    def __init__(self, name, device=None, tracer=None, fromRosParam=False):
         self.OperationalPointsMap = {
             'left-wrist': 'arm_left_7_joint',
             'right-wrist': 'arm_right_7_joint',
@@ -70,16 +72,17 @@ class Talos(AbstractHumanoidRobot):
                 raise RuntimeError('"' + rosParamName + '" is not a ROS parameter.')
             s = rospy.get_param(rosParamName)
 
-            self.loadModelFromString(s, rootJointType=pinocchio.JointModelFreeFlyer,
-                    removeMimicJoints=True)
+            self.loadModelFromString(s, rootJointType=pinocchio.JointModelFreeFlyer, removeMimicJoints=True)
         else:
             self.loadModelFromUrdf(self.defaultFilename,
-                    rootJointType=pinocchio.JointModelFreeFlyer,
-                    removeMimicJoints=True)
+                                   rootJointType=pinocchio.JointModelFreeFlyer,
+                                   removeMimicJoints=True)
 
         assert hasattr(self, "pinocchioModel")
         assert hasattr(self, "pinocchioData")
 
+        if device is not None:
+            self.device = device
         AbstractHumanoidRobot.__init__(self, name, tracer)
 
         self.OperationalPoints.append('waist')
@@ -92,7 +95,6 @@ class Talos(AbstractHumanoidRobot):
         self.dynamic.displayModel()
         self.dimension = self.dynamic.getDimension()
 
-        self.device = device
         self.initializeRobot()
 
         self.AdditionalFrames.append(
