@@ -3,11 +3,13 @@
 
 from __future__ import print_function
 
+import pinocchio
+
 from dynamic_graph import plug
 from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
-from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import AbstractHumanoidRobot
-import pinocchio
+from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import \
+    AbstractHumanoidRobot
 from rospkg import RosPack
 
 
@@ -70,18 +72,17 @@ class Talos(AbstractHumanoidRobot):
                 raise RuntimeError('"' + rosParamName + '" is not a ROS parameter.')
             s = rospy.get_param(rosParamName)
 
-            self.loadModelFromString(s, rootJointType=pinocchio.JointModelFreeFlyer,
-                    removeMimicJoints=True)
+            self.loadModelFromString(s, rootJointType=pinocchio.JointModelFreeFlyer, removeMimicJoints=True)
         else:
             self.loadModelFromUrdf(self.defaultFilename,
-                    rootJointType=pinocchio.JointModelFreeFlyer,
-                    removeMimicJoints=True)
+                                   rootJointType=pinocchio.JointModelFreeFlyer,
+                                   removeMimicJoints=True)
 
         assert hasattr(self, "pinocchioModel")
         assert hasattr(self, "pinocchioData")
 
-	if device!=None:
-	    self.device = device
+        if device != None:
+            self.device = device
         AbstractHumanoidRobot.__init__(self, name, tracer)
 
         self.OperationalPoints.append('waist')
