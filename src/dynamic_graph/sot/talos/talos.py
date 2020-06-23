@@ -10,6 +10,7 @@ from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import \
     AbstractHumanoidRobot
+from dynamic_graph.sot.core.parameter_server import ParameterServer
 from rospkg import RosPack
 
 
@@ -67,12 +68,15 @@ class Talos(AbstractHumanoidRobot):
         if fromRosParam:
             print("Using ROS parameter \"/robot_description\"")
             rosParamName = "/robot_description"
-            import rospy
-            if rosParamName not in rospy.get_param_names():
-                raise RuntimeError('"' + rosParamName + '" is not a ROS parameter.')
-            s = rospy.get_param(rosParamName)
-
-            self.loadModelFromString(s, rootJointType=pinocchio.JointModelFreeFlyer, removeMimicJoints=True)
+            self.param_server = ParameterServer("param_server")
+            self.param_server.init_simple()
+            model2_string=self.param_server.getParameter(rosParamName)
+            print("Start model2_string")
+            print(model2_string)
+            print("Stop model2_string")
+            self.loadModelFromString(model2_string,
+                                     rootJointType=pinocchio.JointModelFreeFlyer,
+                                     removeMimicJoints=True)
         else:
             self.loadModelFromUrdf(self.defaultFilename,
                                    rootJointType=pinocchio.JointModelFreeFlyer,
