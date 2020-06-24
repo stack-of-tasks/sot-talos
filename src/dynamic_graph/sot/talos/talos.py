@@ -11,7 +11,6 @@ from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import \
     AbstractHumanoidRobot
 from dynamic_graph.sot.core.parameter_server import ParameterServer
-from rospkg import RosPack
 
 
 # Internal helper tool.
@@ -66,14 +65,15 @@ class Talos(AbstractHumanoidRobot):
         }
 
         if fromRosParam:
-            print("Using ROS parameter \"/robot_description\"")
-            rosParamName = "/robot_description"
+            ltimeStep=0.005
+            if device is not None:
+                ltimeStep = device.getTimeStep()
+
+            print("Using SoT parameter \"/robot_description\"")
+            paramName = "/robot_description"
             self.param_server = ParameterServer("param_server")
-            self.param_server.init_simple()
-            model2_string=self.param_server.getParameter(rosParamName)
-            print("Start model2_string")
-            print(model2_string)
-            print("Stop model2_string")
+            self.param_server.init_simple(ltimeStep)
+            model2_string=self.param_server.getParameter(paramName)
             self.loadModelFromString(model2_string,
                                      rootJointType=pinocchio.JointModelFreeFlyer,
                                      removeMimicJoints=True)
