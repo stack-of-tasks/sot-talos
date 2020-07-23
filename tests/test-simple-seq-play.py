@@ -2,8 +2,9 @@
 # flake8: noqa
 import sys
 
-import rospy
 from dynamic_graph_bridge_msgs.srv import *
+
+import rospy
 from std_srvs.srv import *
 
 try:
@@ -19,10 +20,10 @@ def launchScript(code, title, description=""):
     rospy.loginfo(code)
     for line in code:
         if line != '' and line[0] != '#':
-            print line
+            print(line)
             answer = runCommandClient(str(line))
             rospy.logdebug(answer)
-            print answer
+            print(answer)
     rospy.loginfo("...done with " + title)
 
 
@@ -53,5 +54,5 @@ try:
     input("Wait before starting the seqplay")
     runCommandClient("aSimpleSeqPlay.start()")
 
-except rospy.ServiceException, e:
+except rospy.ServiceException as e:
     rospy.logerr("Service call failed: %s" % e)
