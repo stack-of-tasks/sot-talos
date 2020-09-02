@@ -26,7 +26,8 @@ def convert(filename):
     openhrpZmp = np.genfromtxt(filename + '.zmp')
     nbConfig = len(openhrpPos)
     if len(openhrpZmp) != nbConfig:
-        raise RuntimeError(filename + ".pos and " + filename + ".zmp have different lengths.")
+        raise RuntimeError(filename + ".pos and " + filename +
+                           ".zmp have different lengths.")
     try:
         openhrpHip = np.genfromtxt(filename + '.hip')
     except IOError:
@@ -41,7 +42,8 @@ def convert(filename):
         openhrpHip = np.array(hip)
 
     if len(openhrpHip) != nbConfig:
-        raise RuntimeError(filename + ".pos and " + filename + ".hip have different lengths.")
+        raise RuntimeError(filename + ".pos and " + filename +
+                           ".hip have different lengths.")
 
     t = 1
     featurePos = []
@@ -114,8 +116,10 @@ def convert(filename):
             0.,
         ))
         t += 1
-        fixedLeftFoot = SE3(robot.leftAnkle.position.value) * R3(0., 0., -0.107)
-        fixedRightFoot = SE3(robot.rightAnkle.position.value) * R3(0., 0., -0.107)
+        fixedLeftFoot = SE3(robot.leftAnkle.position.value) \
+            * R3(0., 0., -0.107)
+        fixedRightFoot = SE3(robot.rightAnkle.position.value) \
+            * R3(0., 0., -0.107)
 
     filePos = open(filename + '.posture', 'w')
     fileLa = open(filename + '.la', 'w')
@@ -125,8 +129,9 @@ def convert(filename):
     fileFr = open(filename + '.fr', 'w')
 
     dt = .005
-    for (pos, la, ra, com, force_lf, force_rf, i) in zip(featurePos, featureLa, featureRa, featureCom, forceLeftFoot,
-                                                         forceRightFoot, range(10000000)):
+    for (pos, la, ra, com, force_lf, force_rf, i) in \
+        zip(featurePos, featureLa, featureRa, featureCom, forceLeftFoot,
+            forceRightFoot, range(10000000)):
         t = i * dt
         filePos.write("{0}".format(t))
         fileLa.write("{0}".format(t))

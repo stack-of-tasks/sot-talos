@@ -100,6 +100,8 @@ if __name__ == '__main__':
     state = client.get_state()
 
     if action_ok:
-        rospy.loginfo("Action finished succesfully with state: " + str(get_status_string(state)))
+        rospy.loginfo("Action finished succesfully with state: "
+                      + str(get_status_string(state)))
     else:
-        rospy.logwarn("Action failed with state: " + str(get_status_string(state)))
+        rospy.logwarn("Action failed with state: "
+                      + str(get_status_string(state)))

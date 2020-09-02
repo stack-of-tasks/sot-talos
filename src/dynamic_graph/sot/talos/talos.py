@@ -5,8 +5,6 @@ from __future__ import print_function
 
 import pinocchio
 
-from dynamic_graph import plug
-from dynamic_graph.sot.core.math_small_entities import Derivator_of_Vector
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import \
     AbstractHumanoidRobot
@@ -27,8 +25,10 @@ class Talos(AbstractHumanoidRobot):
     This class defines a Talos robot
     """
 
-    forceSensorInLeftAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., -0.107), (0., 0., 0., 1.))
-    forceSensorInRightAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., -0.107), (0., 0., 0., 1.))
+    forceSensorInLeftAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.),
+                              (0., 0., 1., -0.107), (0., 0., 0., 1.))
+    forceSensorInRightAnkle = ((1., 0., 0., 0.), (0., 1., 0., 0.),
+                               (0., 0., 1., -0.107), (0., 0., 0., 1.))
     defaultFilename = "package://talos_data/urdf/talos_reduced_v2.urdf"
     """
     TODO: Confirm the position and existence of these sensors
@@ -50,7 +50,8 @@ class Talos(AbstractHumanoidRobot):
         # Gripper position in full configuration: 27:34, and 41:48
         # Small configuration: 36 DOF
         # Full configuration: 50 DOF
-        res = config[0:27] + 7 * (0., ) + config[27:34] + 7 * (0., ) + config[34:]
+        res = config[0:27] + 7 * (0., ) + config[27:34] \
+           + 7 * (0., ) + config[34:]
         return res
 
     def __init__(self, name, device=None, tracer=None, fromRosParam=False):
@@ -73,9 +74,47 @@ class Talos(AbstractHumanoidRobot):
             paramName = "/robot_description"
             self.param_server = ParameterServer("param_server")
             self.param_server.init_simple(ltimeStep)
-            model2_string=self.param_server.getParameter(paramName)
+
+            self.param_server.setParameter("/pg/remap/l_ankle",
+                                           "leg_left_6_link")
+            self.param_server.setParameter("/pg/remap/r_ankle",
+                                           "leg_right_6_link")
+            self.param_server.setParameter("/pg/remap/l_wrist",
+                                           "arm_left_7_link")
+            self.param_server.setParameter("/pg/remap/r_wrist",
+                                           "arm_right_7_link")
+            self.param_server.setParameter("/pg/remap/body",
+                                           "base_link")
+            self.param_server.setParameter("/pg/remap/torso",
+                                           "torso_2_link")
+            lpn_pre = "/robot/specificities/feet/"
+            feet = ['right', 'left']
+            for afoot in feet:
+                self.param_server.setParameterDbl(lpn_pre + afoot +
+                                                  "/size/height",
+                                                  0.122)
+                self.param_server.setParameterDbl(lpn_pre + afoot +
+                                                  "/size/width",
+                                                  0.205)
+                self.param_server.setParameterDbl(lpn_pre + afoot +
+                                                  "/size/depth",
+                                                  0.107)
+                self.param_server.setParameterDbl(lpn_pre + afoot +
+                                                  "/anklePosition/x",
+                                                  0.0)
+                self.param_server.setParameterDbl(lpn_pre + afoot +
+                                                  "/anklePosition/y",
+                                                  0.0)
+                self.param_server.setParameterDbl(lpn_pre + afoot +
+                                                  "/anklePosition/z",
+                                                  0.107)
+            self.param_server.displayRobotUtil()
+
+            model2_string = self.param_server.getParameter(paramName)
+
             self.loadModelFromString(model2_string,
-                                     rootJointType=pinocchio.JointModelFreeFlyer,
+                                     rootJointType=pinocchio.
+                                     JointModelFreeFlyer,
                                      removeMimicJoints=True)
         else:
             self.loadModelFromUrdf(self.defaultFilename,
@@ -102,11 +141,14 @@ class Talos(AbstractHumanoidRobot):
         self.initializeRobot()
 
         self.AdditionalFrames.append(
-            ("leftFootForceSensor", self.forceSensorInLeftAnkle, self.OperationalPointsMap["left-ankle"]))
+            ("leftFootForceSensor", self.forceSensorInLeftAnkle,
+             self.OperationalPointsMap["left-ankle"]))
         self.AdditionalFrames.append(
-            ("rightFootForceSensor", self.forceSensorInRightAnkle, self.OperationalPointsMap["right-ankle"]))
+            ("rightFootForceSensor", self.forceSensorInRightAnkle,
+             self.OperationalPointsMap["right-ankle"]))
 
-        # Create operational points based on operational points map (if provided)
+        # Create operational points based on operational points map
+        # (if provided)
         if self.OperationalPointsMap is not None:
             self.initializeOpPoints()
 
