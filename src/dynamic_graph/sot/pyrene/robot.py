@@ -9,46 +9,58 @@ class Robot(Talos):
     This class instantiates LAAS TALOS Robot
     """
 
-    def defineHalfSitting (self, q):
+    def defineHalfSitting(self, q):
         """
         q is the configuration to fill.
 
-        When this function is called, the attribute pinocchioModel has been filled.
+        When this function is called,
+        the attribute pinocchioModel has been filled.
         """
-        model = self.pinocchioModel
         # Free flyer
         q[2] = 1.018213
         # left leg
         self.setJointValueInConfig(q,
-                [ "leg_left_{}_joint".format(i+1) for i in range(6) ],
-                [ 0., 0., -0.411354, 0.859395, -0.448041, -0.001708,])
+                                   ["leg_left_{}_joint".format(i+1)
+                                    for i in range(6)],
+                                   [0., 0., -0.411354, 0.859395,
+                                    -0.448041, -0.001708])
         # right leg
         self.setJointValueInConfig(q,
-                [ "leg_right_{}_joint".format(i+1) for i in range(6) ],
-                [ 0., 0., -0.411354, 0.859395, -0.448041, -0.001708,])
+                                   ["leg_right_{}_joint".format(i+1)
+                                    for i in range(6)],
+                                   [0., 0., -0.411354, 0.859395,
+                                    -0.448041, -0.001708])
         # torso
         self.setJointValueInConfig(q,
-                [ "torso_{}_joint".format(i+1) for i in range(2) ],
-                [ 0., 0.006761])
+                                   ["torso_{}_joint".format(i+1)
+                                    for i in range(2)],
+                                   [0., 0.006761])
         # left arm
         self.setJointValueInConfig(q,
-                [ "arm_left_{}_joint".format(i+1) for i in range(7) ],
-                [ 0.25847, 0.173046, -0.0002, -0.525366, 0., -0., 0.1 ])
+                                   ["arm_left_{}_joint".format(i+1)
+                                    for i in range(7)],
+                                   [0.25847, 0.173046, -0.0002,
+                                    -0.525366, 0., -0., 0.1])
         # right arm
         self.setJointValueInConfig(q,
-                [ "arm_right_{}_joint".format(i+1) for i in range(7) ],
-                [ -0.25847, -0.173046, 0.0002, -0.525366, 0., 0., 0.1 ])
+                                   ["arm_right_{}_joint".format(i+1)
+                                    for i in range(7)],
+                                   [-0.25847, -0.173046, 0.0002,
+                                    -0.525366, 0., 0., 0.1])
         # grippers
         self.setJointValueInConfig(q,
-                [ "gripper_left_joint", "gripper_right_joint" ],
-                [ -0.005, -0.005 ])
+                                   ["gripper_left_joint",
+                                    "gripper_right_joint"],
+                                   [-0.005, -0.005])
         # torso
         self.setJointValueInConfig(q,
-                [ "head_{}_joint".format(i+1) for i in range(2) ],
-                [ 0., 0.])
+                                   ["head_{}_joint".format(i+1)
+                                    for i in range(2)],
+                                   [0., 0.])
 
     def __init__(self, name, device=None, tracer=None, fromRosParam=None):
-        Talos.__init__(self, name, device=device, tracer=tracer, fromRosParam=fromRosParam)
+        Talos.__init__(self, name, device=device, tracer=tracer,
+                       fromRosParam=fromRosParam)
         """
         TODO:Confirm these values
         # Define camera positions w.r.t gaze.
