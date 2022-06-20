@@ -265,7 +265,13 @@ void SoTTalosDevice::setSensors(map<string, dgsot::SensorValues>& SensorsIn) {
   sotDEBUGOUT(25);
 }
 
-void SoTTalosDevice::setupSetSensors(map<string, dgsot::SensorValues>& SensorsIn) { setSensors(SensorsIn); }
+void SoTTalosDevice::setupSetSensors(map<string, dgsot::SensorValues>& SensorsIn)
+{
+  // The first time we read the sensors, we need to copy the state of the
+  // robot into the signal device.state.
+  setSensors(SensorsIn);
+  setState(robotState_(0));
+}
 
 void SoTTalosDevice::nominalSetSensors(map<string, dgsot::SensorValues>& SensorsIn) { setSensors(SensorsIn); }
 
