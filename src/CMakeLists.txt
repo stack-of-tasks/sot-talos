@@ -41,8 +41,9 @@ add_library(${CONTROLLER_NAME} SHARED ${CONTROLLER_NAME}.cpp
 
 # Link the dynamic library containing the SoT with its dependencies.
 target_link_libraries(
-  ${CONTROLLER_NAME} ${DEVICE_NAME} dynamic_graph_bridge::ros_interpreter
-  dynamic_graph_bridge::ros_bridge)
+  ${CONTROLLER_NAME}
+  PUBLIC ${DEVICE_NAME} dynamic_graph_bridge::ros_interpreter
+         dynamic_graph_bridge::ros_bridge)
 pkg_config_use_dependency(${CONTROLLER_NAME} dynamic_graph_bridge_msgs)
 
 install(
