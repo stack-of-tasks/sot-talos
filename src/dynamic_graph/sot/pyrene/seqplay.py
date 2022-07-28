@@ -7,8 +7,8 @@ from dynamic_graph.sot.core.matrix_util import RPYToMatrix
 from dynamic_graph.sot.pyrene.robot import Robot
 from dynamic_graph.sot.tools.se3 import R3, SE3
 
-robot = Robot('seqplay')
-rpy2matrix = RPYToMatrix('rpy2matrix')
+robot = Robot("seqplay")
+rpy2matrix = RPYToMatrix("rpy2matrix")
 m = 56.868
 g = 9.81
 
@@ -22,28 +22,32 @@ def convert(filename):
     Convert a seqplay file in OpenHRP format to sot-tool format
     """
     global pos, zmp, hip
-    openhrpPos = np.genfromtxt(filename + '.pos')
-    openhrpZmp = np.genfromtxt(filename + '.zmp')
+    openhrpPos = np.genfromtxt(filename + ".pos")
+    openhrpZmp = np.genfromtxt(filename + ".zmp")
     nbConfig = len(openhrpPos)
     if len(openhrpZmp) != nbConfig:
-        raise RuntimeError(filename + ".pos and " + filename +
-                           ".zmp have different lengths.")
+        raise RuntimeError(
+            filename + ".pos and " + filename + ".zmp have different lengths."
+        )
     try:
-        openhrpHip = np.genfromtxt(filename + '.hip')
+        openhrpHip = np.genfromtxt(filename + ".hip")
     except IOError:
         hip = []
         for i in range(len(openhrpPos)):
-            hip.append((
-                openhrpPos[i][0],
-                0,
-                0,
-                0,
-            ))
+            hip.append(
+                (
+                    openhrpPos[i][0],
+                    0,
+                    0,
+                    0,
+                )
+            )
         openhrpHip = np.array(hip)
 
     if len(openhrpHip) != nbConfig:
-        raise RuntimeError(filename + ".pos and " + filename +
-                           ".hip have different lengths.")
+        raise RuntimeError(
+            filename + ".pos and " + filename + ".hip have different lengths."
+        )
 
     t = 1
     featurePos = []
@@ -57,15 +61,15 @@ def convert(filename):
     fixedLeftFoot = None
     fixedRightFoot = None
     for (pos, zmp, hip) in zip(openhrpPos, openhrpZmp, openhrpHip):
-        translation = 3 * (0., )
+        translation = 3 * (0.0,)
         config = list(translation + tuple(hip[1:]) + tuple(pos[1:31]))
         robot.dynamic.position.value = tuple(config)
         robot.dynamic.position.time = t
         robot.com.recompute(t)
         robot.leftAnkle.position.recompute(t)
         robot.rightAnkle.position.recompute(t)
-        lf = SE3(robot.leftAnkle.position.value) * R3(0., 0., -0.107)
-        rf = SE3(robot.rightAnkle.position.value) * R3(0., 0., -0.107)
+        lf = SE3(robot.leftAnkle.position.value) * R3(0.0, 0.0, -0.107)
+        rf = SE3(robot.rightAnkle.position.value) * R3(0.0, 0.0, -0.107)
         # find support foot
         rpy2matrix.sin.value = tuple(hip[1:])
         rpy2matrix.sout.recompute(t)
@@ -99,39 +103,47 @@ def convert(filename):
         featureCom.append(robot.com.value)
         featureLa.append(robot.leftAnkle.position.value)
         featureRa.append(robot.rightAnkle.position.value)
-        forceLeftFoot.append((
-            0.,
-            0.,
-            fl,
-            0.,
-            0.,
-            0.,
-        ))
-        forceRightFoot.append((
-            0.,
-            0.,
-            fr,
-            0.,
-            0.,
-            0.,
-        ))
+        forceLeftFoot.append(
+            (
+                0.0,
+                0.0,
+                fl,
+                0.0,
+                0.0,
+                0.0,
+            )
+        )
+        forceRightFoot.append(
+            (
+                0.0,
+                0.0,
+                fr,
+                0.0,
+                0.0,
+                0.0,
+            )
+        )
         t += 1
-        fixedLeftFoot = SE3(robot.leftAnkle.position.value) \
-            * R3(0., 0., -0.107)
-        fixedRightFoot = SE3(robot.rightAnkle.position.value) \
-            * R3(0., 0., -0.107)
+        fixedLeftFoot = SE3(robot.leftAnkle.position.value) * R3(0.0, 0.0, -0.107)
+        fixedRightFoot = SE3(robot.rightAnkle.position.value) * R3(0.0, 0.0, -0.107)
 
-    filePos = open(filename + '.posture', 'w')
-    fileLa = open(filename + '.la', 'w')
-    fileRa = open(filename + '.ra', 'w')
-    fileCom = open(filename + '.com', 'w')
-    fileFl = open(filename + '.fl', 'w')
-    fileFr = open(filename + '.fr', 'w')
+    filePos = open(filename + ".posture", "w")
+    fileLa = open(filename + ".la", "w")
+    fileRa = open(filename + ".ra", "w")
+    fileCom = open(filename + ".com", "w")
+    fileFl = open(filename + ".fl", "w")
+    fileFr = open(filename + ".fr", "w")
 
-    dt = .005
-    for (pos, la, ra, com, force_lf, force_rf, i) in \
-        zip(featurePos, featureLa, featureRa, featureCom, forceLeftFoot,
-            forceRightFoot, range(10000000)):
+    dt = 0.005
+    for (pos, la, ra, com, force_lf, force_rf, i) in zip(
+        featurePos,
+        featureLa,
+        featureRa,
+        featureCom,
+        forceLeftFoot,
+        forceRightFoot,
+        range(10000000),
+    ):
         t = i * dt
         filePos.write("{0}".format(t))
         fileLa.write("{0}".format(t))
@@ -175,6 +187,6 @@ def convert(filename):
     fileFr.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
     # convert('/opt/grx3.0/HRP2LAAS/etc/walkfwd')

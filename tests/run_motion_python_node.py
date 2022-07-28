@@ -36,16 +36,19 @@ def show_usage():
     motion_names = []
     for param_name in param_names:
         # If the parameter is like '/play_motion/motions/MOTION_NAME/joints'
-        if "/play_motion/motions" in param_name and '/joints' in param_name:
-            motion_name = param_name.replace('/play_motion/motions/', '')
-            motion_name = motion_name.replace('/joints', '')
+        if "/play_motion/motions" in param_name and "/joints" in param_name:
+            motion_name = param_name.replace("/play_motion/motions/", "")
+            motion_name = motion_name.replace("/joints", "")
             motion_names.append(motion_name)
 
-    rospy.loginfo("""Usage:
+    rospy.loginfo(
+        """Usage:
 
 \trosrun run_motion run_motion_python_node.py MOTION_NAME"
 
-\twhere MOTION_NAME must be one of the motions listed in: """ + str(motion_names))
+\twhere MOTION_NAME must be one of the motions listed in: """
+        + str(motion_names)
+    )
 
 
 def wait_for_valid_time(timeout):
@@ -72,8 +75,8 @@ def get_status_string(status_code):
     return GoalStatus.to_string(status_code)
 
 
-if __name__ == '__main__':
-    rospy.init_node('run_motion_python')
+if __name__ == "__main__":
+    rospy.init_node("run_motion_python")
     if len(sys.argv) < 2:
         show_usage()
         exit(0)
@@ -81,7 +84,7 @@ if __name__ == '__main__':
     rospy.loginfo("Starting run_motion_python application...")
     wait_for_valid_time(10.0)
 
-    client = SimpleActionClient('/play_motion', PlayMotionAction)
+    client = SimpleActionClient("/play_motion", PlayMotionAction)
 
     rospy.loginfo("Waiting for Action Server...")
     client.wait_for_server()
@@ -100,8 +103,8 @@ if __name__ == '__main__':
     state = client.get_state()
 
     if action_ok:
-        rospy.loginfo("Action finished succesfully with state: "
-                      + str(get_status_string(state)))
+        rospy.loginfo(
+            "Action finished succesfully with state: " + str(get_status_string(state))
+        )
     else:
-        rospy.logwarn("Action failed with state: "
-                      + str(get_status_string(state)))
+        rospy.logwarn("Action failed with state: " + str(get_status_string(state)))

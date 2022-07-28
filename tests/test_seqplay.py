@@ -33,19 +33,21 @@ from dynamic_graph.sot.tools import SimpleSeqPlay
 
 URDFPATH = "~/git/pyrene/talos-data" + "/robots/talos_reduced.urdf"
 URDFDIR = ["~/git/pyrene/talos-data" + "/../"]
-MOTION_SEQUENCE = "~/git/pyrene/pyrene-motions/grabHandrail15/stairs_15cm_handrail_grab_actuated"
+MOTION_SEQUENCE = (
+    "~/git/pyrene/pyrene-motions/grabHandrail15/stairs_15cm_handrail_grab_actuated"
+)
 DISPLAY = True
 
 dt = 1e-3
-robotName = 'TALOS'
+robotName = "TALOS"
 OperationalPointsMap = {
-    'left-wrist': 'arm_left_7_joint',
-    'right-wrist': 'arm_right_7_joint',
-    'left-ankle': 'leg_left_6_joint',
-    'right-ankle': 'leg_right_6_joint',
-    'gaze': 'head_2_joint',
-    'waist': 'root_joint',
-    'chest': 'torso_2_joint'
+    "left-wrist": "arm_left_7_joint",
+    "right-wrist": "arm_right_7_joint",
+    "left-ankle": "leg_left_6_joint",
+    "right-ankle": "leg_right_6_joint",
+    "gaze": "head_2_joint",
+    "waist": "root_joint",
+    "chest": "torso_2_joint",
 }
 
 halfSitting = (
@@ -85,8 +87,8 @@ halfSitting = (
     0.0,
     0.1,
     0.1,  # Right Arm
-    0.,
-    0.  # Head
+    0.0,
+    0.0,  # Head
 )
 
 # -----------------------------------------------------------------------------
@@ -99,17 +101,23 @@ pinocchioRobot.initDisplay(loadModel=DISPLAY)
 if DISPLAY:
     pinocchioRobot.display(fromSotToPinocchio(halfSitting))
 
-robot = HumanoidRobot(robotName, pinocchioRobot.model, pinocchioRobot.data, halfSitting, OperationalPointsMap)
+robot = HumanoidRobot(
+    robotName,
+    pinocchioRobot.model,
+    pinocchioRobot.data,
+    halfSitting,
+    OperationalPointsMap,
+)
 
-sot = SOT('sot')
+sot = SOT("sot")
 sot.setSize(robot.dynamic.getDimension())
 plug(sot.control, robot.device.control)
 
 task_name = "posture_task"
 taskPosture = Task(task_name)
 taskPosture.dyn = robot.dynamic
-taskPosture.feature = FeatureGeneric('feature_' + task_name)
-taskPosture.featureDes = FeatureGeneric('feature_des_' + task_name)
+taskPosture.feature = FeatureGeneric("feature_" + task_name)
+taskPosture.featureDes = FeatureGeneric("feature_des_" + task_name)
 taskPosture.gain = GainAdaptive("gain_" + task_name)
 robotDim = robot.dynamic.getDimension()
 first_6 = zeros((32, 6))

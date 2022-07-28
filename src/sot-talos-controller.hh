@@ -11,17 +11,17 @@
 #ifndef _SOT_TalosController_H_
 #define _SOT_TalosController_H_
 
-#include <pinocchio/fwd.hpp>
-
 #include <dynamic-graph/entity.h>
-#include <dynamic-graph/signal.h>
-#include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/linear-algebra.h>
-#include <sot/core/device.hh>
+#include <dynamic-graph/signal-ptr.h>
+#include <dynamic-graph/signal.h>
+
+#include <dynamic_graph_bridge/ros_interpreter.hh>
+#include <pinocchio/fwd.hpp>
 #include <sot/core/abstract-sot-external-interface.hh>
+#include <sot/core/device.hh>
 
 #include "sot-talos-device.hh"
-#include <dynamic_graph_bridge/ros_interpreter.hh>
 namespace dgsot = dynamicgraph::sot;
 
 class SoTTalosController : public dgsot::AbstractSotExternalInterface {
@@ -56,7 +56,8 @@ class SoTTalosController : public dgsot::AbstractSotExternalInterface {
   void updateRobotState(std::vector<double> &anglesIn);
 
   /// Run a python command
-  void runPython(std::ostream &file, const std::string &command, dynamicgraph::Interpreter &interpreter);
+  void runPython(std::ostream &file, const std::string &command,
+                 dynamicgraph::Interpreter &interpreter);
 
   virtual void startupPython();
 

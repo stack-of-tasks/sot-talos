@@ -13,11 +13,11 @@ except NameError:
 
 
 def launchScript(code, title, description=""):
-    input(title + ':   ' + description)
+    input(title + ":   " + description)
     rospy.loginfo(title)
     rospy.loginfo(code)
     for line in code:
-        if line != '' and line[0] != '#':
+        if line != "" and line[0] != "#":
             print(line)
             answer = runCommandClient(str(line))
             rospy.logdebug(answer)
@@ -28,15 +28,15 @@ def launchScript(code, title, description=""):
 # Waiting for services
 try:
     rospy.loginfo("Waiting for run_command")
-    rospy.wait_for_service('/run_command')
+    rospy.wait_for_service("/run_command")
     rospy.loginfo("...ok")
 
     rospy.loginfo("Waiting for start_dynamic_graph")
-    rospy.wait_for_service('/start_dynamic_graph')
+    rospy.wait_for_service("/start_dynamic_graph")
     rospy.loginfo("...ok")
 
-    runCommandClient = rospy.ServiceProxy('run_command', RunCommand)
-    runCommandStartDynamicGraph = rospy.ServiceProxy('start_dynamic_graph', Empty)
+    runCommandClient = rospy.ServiceProxy("run_command", RunCommand)
+    runCommandStartDynamicGraph = rospy.ServiceProxy("start_dynamic_graph", Empty)
 
     with open("appli.py", "r") as f:
         initCode = f.read().split("\n")
@@ -49,7 +49,7 @@ try:
     # runCommandClient("sot.setSize(robot.dynamic.getDimension())")
     # runCommandClient("plug(sot.control,robot.device.control)")
 
-    launchScript(initCode, 'initialize SoT')
+    launchScript(initCode, "initialize SoT")
     input("Wait before starting the dynamic graph")
     runCommandStartDynamicGraph()
     input("Wait before moving the hand")

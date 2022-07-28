@@ -17,7 +17,8 @@
 
 #include "sot-pyrene-controller.hh"
 
-const std::string SoTPyreneController::LOG_PYTHON_PYRENE = "/tmp/PyreneController_python.out";
+const std::string SoTPyreneController::LOG_PYTHON_PYRENE =
+    "/tmp/PyreneController_python.out";
 
 SoTPyreneController::SoTPyreneController() : SoTTalosController(ROBOTNAME) {
   startupPython();
@@ -28,15 +29,20 @@ void SoTPyreneController::startupPython() {
   SoTTalosController::startupPython();
   std::ofstream aof(LOG_PYTHON_PYRENE.c_str());
 
-  runPython(aof, "from dynamic_graph.sot.pyrene.prologue import makeRobot", *interpreter_);
+  runPython(aof, "from dynamic_graph.sot.pyrene.prologue import makeRobot",
+            *interpreter_);
   runPython(aof, "robot = makeRobot ()", *interpreter_);
   aof.close();
 }
 
 extern "C" {
-dgsot::AbstractSotExternalInterface *createSotExternalInterface() { return new SoTPyreneController; }
+dgsot::AbstractSotExternalInterface *createSotExternalInterface() {
+  return new SoTPyreneController;
+}
 }
 
 extern "C" {
-void destroySotExternalInterface(dgsot::AbstractSotExternalInterface *p) { delete p; }
+void destroySotExternalInterface(dgsot::AbstractSotExternalInterface *p) {
+  delete p;
+}
 }
