@@ -21,7 +21,6 @@ set(CXX_DISABLE_WERROR TRUE)
 # JRL-cmakemodule setup
 include(cmake/base.cmake)
 include(cmake/boost.cmake)
-include(cmake/python.cmake)
 include(cmake/ros.cmake)
 
 # Project definition
@@ -29,19 +28,17 @@ compute_project_args(PROJECT_ARGS LANGUAGES CXX C)
 project(${PROJECT_NAME} ${PROJECT_ARGS})
 
 # Project dependencies
-findpython()
-search_for_boost_python()
-
 set(CATKIN_REQUIRED_COMPONENTS roscpp std_msgs)
 set(CATKIN_DEPENDS_LIBRARIES ros_bridge sot_loader)
 
 add_project_dependency(sot-dynamic-pinocchio REQUIRED)
-add_project_dependency(dynamic-graph-python 4.0.0 REQUIRED)
+add_project_dependency(dynamic-graph-python 4.0.6 REQUIRED)
 add_project_dependency(dynamic_graph_bridge REQUIRED)
 add_project_dependency(roscpp REQUIRED)
 add_project_dependency(talos_data REQUIRED)
 add_project_dependency(pyrene-motions REQUIRED)
 add_required_dependency(dynamic_graph_bridge_msgs)
+include(cmake/python.cmake) # TODO: overwriting eigenpy/python.cmake
 
 find_package(catkin REQUIRED COMPONENTS ${CATKIN_REQUIRED_COMPONENTS})
 
@@ -72,6 +69,4 @@ install(FILES ${PROJECT_SOURCE_DIR}/tests/test.py
               ${PROJECT_SOURCE_DIR}/tests/appli.py
         DESTINATION share/${PROJECT_NAME}/tests)
 
-if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-  install(FILES package.xml DESTINATION share/${PROJECT_NAME})
-endif(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+install(FILES package.xml DESTINATION share/${PROJECT_NAME})
