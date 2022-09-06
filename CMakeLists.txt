@@ -44,7 +44,7 @@ find_package(catkin REQUIRED COMPONENTS ${CATKIN_REQUIRED_COMPONENTS})
 add_subdirectory(src)
 
 foreach(py_filename kinetalos katana_holding)
-  configure_file(${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
+  configure_file(${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.in
                  ${PROJECT_BINARY_DIR}/tests/${py_filename}.py)
   install(FILES ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
           DESTINATION share/${PROJECT_NAME}/tests)
@@ -52,7 +52,7 @@ endforeach(py_filename)
 
 # Configure files using motions from pyrene-motions package
 foreach(py_filename appli-test-simple-seq-play)
-  configure_file(${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.cmake
+  configure_file(${PROJECT_SOURCE_DIR}/tests/${py_filename}.py.in
                  ${PROJECT_BINARY_DIR}/tests/${py_filename}.py)
   install(FILES ${PROJECT_BINARY_DIR}/tests/${py_filename}.py
           DESTINATION share/${PROJECT_NAME}/tests)
