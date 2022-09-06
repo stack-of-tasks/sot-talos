@@ -19,11 +19,12 @@
 #define _SOT_TalosDevice_H_
 
 #include <dynamic-graph/entity.h>
-#include <dynamic-graph/signal.h>
-#include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/linear-algebra.h>
-#include <sot/core/device.hh>
+#include <dynamic-graph/signal-ptr.h>
+#include <dynamic-graph/signal.h>
+
 #include <sot/core/abstract-sot-external-interface.hh>
+#include <sot/core/device.hh>
 #include <sot/core/matrix-geometry.hh>
 
 namespace dgsot = dynamicgraph::sot;
@@ -75,12 +76,18 @@ class SoTTalosDevice : public dgsot::Device {
   dynamicgraph::Signal<dg::Vector, int> d_gainsSOUT_;
 
   /// Protected methods for internal variables filling
-  void setSensorsForce(std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
-  void setSensorsIMU(std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
-  void setSensorsEncoders(std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
-  void setSensorsVelocities(std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
-  void setSensorsTorquesCurrents(std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
-  void setSensorsGains(std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsForce(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+                       int t);
+  void setSensorsIMU(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+                     int t);
+  void setSensorsEncoders(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+                          int t);
+  void setSensorsVelocities(
+      std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsTorquesCurrents(
+      std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
+  void setSensorsGains(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+                       int t);
 
   /// Intermediate variables to avoid allocation during control
   dg::Vector dgforces_;

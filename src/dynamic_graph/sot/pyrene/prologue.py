@@ -10,7 +10,7 @@ import numpy as np
 from dynamic_graph.sot.pyrene.robot import Robot
 from dynamic_graph.sot.talos.sot_talos_device import DeviceTalos
 
-if not hasattr(sys, 'argv'):
+if not hasattr(sys, "argv"):
     sys.argv = [
         "dynamic_graph",
     ]
@@ -28,10 +28,10 @@ def makeRobot():
     """
 
     # Create the robot using the device.
-    robot = Robot(name='talos', device=DeviceTalos('PYRENE'), fromRosParam=True)
+    robot = Robot(name="talos", device=DeviceTalos("PYRENE"), fromRosParam=True)
     robot.dynamic.com.recompute(0)
     _com = robot.dynamic.com.value
-    robot.device.zmp.value = np.array((_com[0], _com[1], 0.))
+    robot.device.zmp.value = np.array((_com[0], _com[1], 0.0))
 
     return robot
 
