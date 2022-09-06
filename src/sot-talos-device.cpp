@@ -300,10 +300,12 @@ void SoTTalosDevice::cleanupSetSensors(
 }
 
 void SoTTalosDevice::getControl(map<string, dgsot::ControlValues>& controlOut) {
+
   ODEBUG5FULL("start");
   sotDEBUGIN(25);
-  vector<double> anglesOut;
+  vector<double> anglesOut, velocityOut;
   anglesOut.resize(state_.size());
+  velocityOut.resize(state_.size());
 
   // Integrate control
   increment(timestep_);
@@ -320,13 +322,23 @@ void SoTTalosDevice::getControl(map<string, dgsot::ControlValues>& controlOut) {
   previousState_ = state_;
 
   // Specify the joint values for the controller.
-  if ((int)anglesOut.size() != state_.size() - 6)
+  // warning: we make here the asumption that the control signal contains the
+  // velocity of the freeflyer joint. This may change in the future.
+  if ((int)anglesOut.size() != state_.size() - 6){
     anglesOut.resize(state_.size() - 6);
+    velocityOut.resize(state_.size() - 6);
+  }
 
-  for (unsigned int i = 6; i < state_.size(); ++i) anglesOut[i - 6] = state_(i);
-  controlOut["control"].setValues(anglesOut);
-  // Read zmp reference from input signal if plugged
   int time = controlSIN.getTime();
+  for (unsigned int i = 6; i < state_.size(); ++i){
+    anglesOut[i - 6] = state_(i);
+    velocityOut[i-6] = controlSIN(time)(i);
+  }
+  // Store in "control" the joint values
+  controlOut["control"].setValues(anglesOut);
+  // Store in "velocity" the joint velocity values
+  controlOut["velocity"].setValues(velocityOut);
+  // Read zmp reference from input signal if plugged
   zmpSIN.recompute(time + 1);
   // Express ZMP in free flyer reference frame
   dg::Vector zmpGlobal(4);
