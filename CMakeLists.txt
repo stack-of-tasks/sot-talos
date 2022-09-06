@@ -31,14 +31,13 @@ project(${PROJECT_NAME} ${PROJECT_ARGS})
 set(CATKIN_REQUIRED_COMPONENTS roscpp std_msgs)
 set(CATKIN_DEPENDS_LIBRARIES ros_bridge sot_loader)
 
-add_project_dependency(sot-dynamic-pinocchio REQUIRED)
 add_project_dependency(dynamic-graph-python 4.0.6 REQUIRED)
+add_project_dependency(sot-dynamic-pinocchio REQUIRED)
 add_project_dependency(dynamic_graph_bridge REQUIRED)
 add_project_dependency(roscpp REQUIRED)
 add_project_dependency(talos_data REQUIRED)
 add_project_dependency(pyrene-motions REQUIRED)
 add_required_dependency(dynamic_graph_bridge_msgs)
-include(cmake/python.cmake) # TODO: overwriting eigenpy/python.cmake
 
 find_package(catkin REQUIRED COMPONENTS ${CATKIN_REQUIRED_COMPONENTS})
 
