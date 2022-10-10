@@ -300,7 +300,6 @@ void SoTTalosDevice::cleanupSetSensors(
 }
 
 void SoTTalosDevice::getControl(map<string, dgsot::ControlValues>& controlOut) {
-
   ODEBUG5FULL("start");
   sotDEBUGIN(25);
   vector<double> anglesOut, velocityOut;
@@ -324,15 +323,15 @@ void SoTTalosDevice::getControl(map<string, dgsot::ControlValues>& controlOut) {
   // Specify the joint values for the controller.
   // warning: we make here the asumption that the control signal contains the
   // velocity of the freeflyer joint. This may change in the future.
-  if ((int)anglesOut.size() != state_.size() - 6){
+  if ((int)anglesOut.size() != state_.size() - 6) {
     anglesOut.resize(state_.size() - 6);
     velocityOut.resize(state_.size() - 6);
   }
 
   int time = controlSIN.getTime();
-  for (unsigned int i = 6; i < state_.size(); ++i){
+  for (unsigned int i = 6; i < state_.size(); ++i) {
     anglesOut[i - 6] = state_(i);
-    velocityOut[i-6] = controlSIN(time)(i);
+    velocityOut[i - 6] = controlSIN(time)(i);
   }
   // Store in "control" the joint values
   controlOut["control"].setValues(anglesOut);
