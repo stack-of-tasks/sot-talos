@@ -60,7 +60,7 @@ def convert(filename):
     fixedFoot = None
     fixedLeftFoot = None
     fixedRightFoot = None
-    for (pos, zmp, hip) in zip(openhrpPos, openhrpZmp, openhrpHip):
+    for pos, zmp, hip in zip(openhrpPos, openhrpZmp, openhrpHip):
         translation = 3 * (0.0,)
         config = list(translation + tuple(hip[1:]) + tuple(pos[1:31]))
         robot.dynamic.position.value = tuple(config)
@@ -135,7 +135,7 @@ def convert(filename):
     fileFr = open(filename + ".fr", "w")
 
     dt = 0.005
-    for (pos, la, ra, com, force_lf, force_rf, i) in zip(
+    for pos, la, ra, com, force_lf, force_rf, i in zip(
         featurePos,
         featureLa,
         featureRa,
