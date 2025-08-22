@@ -22,7 +22,7 @@ class SoTPyreneController : public SoTTalosController {
   static const std::string LOG_PYTHON_PYRENE;
 
   SoTPyreneController();
-  virtual ~SoTPyreneController(){};
+  virtual ~SoTPyreneController() {};
 
  protected:
   virtual void startupPython();
