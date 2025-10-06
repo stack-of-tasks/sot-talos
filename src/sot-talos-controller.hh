@@ -33,13 +33,13 @@ class SoTTalosController : public dgsot::AbstractSotExternalInterface {
   SoTTalosController(std::string robotName);
   virtual ~SoTTalosController();
 
-  void setupSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void setupSetSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void nominalSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void nominalSetSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void cleanupSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void cleanupSetSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void getControl(std::map<std::string, dgsot::ControlValues> &anglesOut);
+  void getControl(std::map<std::string, dgsot::ControlValues>& anglesOut);
 
   void setNoIntegration(void);
   void setSecondOrderIntegration(void);
@@ -53,17 +53,17 @@ class SoTTalosController : public dgsot::AbstractSotExternalInterface {
  protected:
   // Update output port with the control computed from the
   // dynamic graph.
-  void updateRobotState(std::vector<double> &anglesIn);
+  void updateRobotState(std::vector<double>& anglesIn);
 
   /// Run a python command
-  void runPython(std::ostream &file, const std::string &command,
-                 dynamicgraph::Interpreter &interpreter);
+  void runPython(std::ostream& file, const std::string& command,
+                 dynamicgraph::Interpreter& interpreter);
 
   virtual void startupPython();
 
   void init();
 
-  SoTTalosDevice *device_;
+  SoTTalosDevice* device_;
 };
 
 #endif /* _SOT_TalosController_H_ */
