@@ -42,7 +42,7 @@ void SoTTalosController::init() {
 
   // rosInit is called here only to initialize ros.
   // No spinner is initialized.
-  ros::NodeHandle &nh = dynamicgraph::rosInit(false, false);
+  ros::NodeHandle& nh = dynamicgraph::rosInit(false, false);
   interpreter_ = boost::shared_ptr<dynamicgraph::Interpreter>(
       new dynamicgraph::Interpreter(nh));
 
@@ -59,27 +59,27 @@ SoTTalosController::~SoTTalosController() {
 }
 
 void SoTTalosController::setupSetSensors(
-    map<string, dgsot::SensorValues> &SensorsIn) {
+    map<string, dgsot::SensorValues>& SensorsIn) {
   device_->setupSetSensors(SensorsIn);
 }
 
 void SoTTalosController::nominalSetSensors(
-    map<string, dgsot::SensorValues> &SensorsIn) {
+    map<string, dgsot::SensorValues>& SensorsIn) {
   device_->nominalSetSensors(SensorsIn);
 }
 
 void SoTTalosController::cleanupSetSensors(
-    map<string, dgsot::SensorValues> &SensorsIn) {
+    map<string, dgsot::SensorValues>& SensorsIn) {
   device_->cleanupSetSensors(SensorsIn);
 }
 
 void SoTTalosController::getControl(
-    map<string, dgsot::ControlValues> &controlOut) {
+    map<string, dgsot::ControlValues>& controlOut) {
   try {
     sotDEBUG(25) << __FILE__ << __FUNCTION__ << "(#" << __LINE__ << ")" << endl;
     device_->getControl(controlOut);
     sotDEBUG(25) << __FILE__ << __FUNCTION__ << "(#" << __LINE__ << ")" << endl;
-  } catch (dynamicgraph::sot::ExceptionAbstract &err) {
+  } catch (dynamicgraph::sot::ExceptionAbstract& err) {
     std::cout << __FILE__ << " " << __FUNCTION__ << " (" << __LINE__ << ") "
               << err.getStringMessage() << endl;
     throw err;
@@ -92,9 +92,9 @@ void SoTTalosController::setSecondOrderIntegration(void) {
   device_->setSecondOrderIntegration();
 }
 
-void SoTTalosController::runPython(std::ostream &file,
-                                   const std::string &command,
-                                   dynamicgraph::Interpreter &interpreter) {
+void SoTTalosController::runPython(std::ostream& file,
+                                   const std::string& command,
+                                   dynamicgraph::Interpreter& interpreter) {
   file << ">>> " << command << std::endl;
   std::string lres(""), lout(""), lerr("");
   interpreter.runCommand(command, lres, lout, lerr);

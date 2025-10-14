@@ -35,20 +35,20 @@ class SoTTalosDevice : public dgsot::Device {
   static const std::string CLASS_NAME;
   static const double TIMESTEP_DEFAULT;
 
-  virtual const std::string &getClassName() const { return CLASS_NAME; }
+  virtual const std::string& getClassName() const { return CLASS_NAME; }
 
   SoTTalosDevice(std::string RobotName);
   virtual ~SoTTalosDevice();
 
-  void setSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void setSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void setupSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void setupSetSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void nominalSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void nominalSetSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void cleanupSetSensors(std::map<std::string, dgsot::SensorValues> &sensorsIn);
+  void cleanupSetSensors(std::map<std::string, dgsot::SensorValues>& sensorsIn);
 
-  void getControl(std::map<std::string, dgsot::ControlValues> &anglesOut);
+  void getControl(std::map<std::string, dgsot::ControlValues>& anglesOut);
 
   void timeStep(double ts) { timestep_ = ts; }
 
@@ -76,17 +76,17 @@ class SoTTalosDevice : public dgsot::Device {
   dynamicgraph::Signal<dg::Vector, int> d_gainsSOUT_;
 
   /// Protected methods for internal variables filling
-  void setSensorsForce(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+  void setSensorsForce(std::map<std::string, dgsot::SensorValues>& SensorsIn,
                        int t);
-  void setSensorsIMU(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+  void setSensorsIMU(std::map<std::string, dgsot::SensorValues>& SensorsIn,
                      int t);
-  void setSensorsEncoders(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+  void setSensorsEncoders(std::map<std::string, dgsot::SensorValues>& SensorsIn,
                           int t);
   void setSensorsVelocities(
-      std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
+      std::map<std::string, dgsot::SensorValues>& SensorsIn, int t);
   void setSensorsTorquesCurrents(
-      std::map<std::string, dgsot::SensorValues> &SensorsIn, int t);
-  void setSensorsGains(std::map<std::string, dgsot::SensorValues> &SensorsIn,
+      std::map<std::string, dgsot::SensorValues>& SensorsIn, int t);
+  void setSensorsGains(std::map<std::string, dgsot::SensorValues>& SensorsIn,
                        int t);
 
   /// Intermediate variables to avoid allocation during control
